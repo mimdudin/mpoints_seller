@@ -63,38 +63,31 @@ class _SignupPageState extends State<SignupPage> {
               key: _formKey,
               child: ListView(
                 children: <Widget>[
-                  // Container(
-                  //   child: ClipPath(
-                  //     child: Stack(
-                  //       fit: StackFit.expand,
-                  //       children: <Widget>[
-                  //         Container(
-                  //           decoration: BoxDecoration(color: Colors.brown),
-                  //         ),
-                  //         Container(
-                  //           child: Icon(Icons.adb),
-                  //         )
-                  //       ],
-                  //     ),
-                  //     clipper: Header(),
-                  //   ),
-                  // ),
-                  SizedBox(height: 20),
-                  _buildBackBtn(context),
-                  SizedBox(height: 20),
 
-                  _buildLogo(),
-                  SizedBox(height: 20),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Sign Up',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subhead
-                          .copyWith(fontSize: 30, color: Pallete.primary),
-                    ),
+                  Stack(
+                    children: <Widget>[
+                      Container(
+                        child: Image.asset(
+                          "assets/BG.png",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      _buildBackBtn(context),
+                      _buildLogo(),
+                      Container(
+                        margin: EdgeInsets.only(top: 250),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Sign Up',
+                          style: Theme.of(context)
+                              .textTheme
+                              .subhead
+                              .copyWith(fontSize: 22, color: Pallete.primary),
+                        ),
+                      ),
+                    ],
                   ),
+
                   SizedBox(height: 25),
                   _buildEmailField(),
                   SizedBox(height: 5),
@@ -157,12 +150,13 @@ class _SignupPageState extends State<SignupPage> {
 
   Widget _buildBackBtn(BuildContext context) {
     return Container(
+        margin: EdgeInsets.only(top: 20),
         alignment: Alignment.centerLeft,
         child: IconButton(
           icon: Icon(
             Icons.arrow_back,
             size: 28,
-            color: Pallete.primary,
+            color: Colors.white,
           ),
           onPressed: () => Navigator.pop(context),
         ));
@@ -303,9 +297,9 @@ class _SignupPageState extends State<SignupPage> {
 
   Widget _buildLogo() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 25),
+      margin: EdgeInsets.only(left: 25, right: 25, top: 80),
       alignment: Alignment.center,
-      height: 100,
+      height: 150,
       child: Image.asset(
         "assets/logo_v2.png",
         fit: BoxFit.cover,

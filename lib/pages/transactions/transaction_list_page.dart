@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../utils/pallete.dart';
+import '../../utils/pallete.dart';
+import '../../pages/sale/sale_scanUser_page.dart';
 
 class TransactionListPage extends StatefulWidget {
   @override
@@ -403,7 +404,12 @@ class _TransactionListPageState extends State<TransactionListPage> {
         icon: const Icon(Icons.add),
         backgroundColor: Pallete.primary,
         label: const Text('New Sale'),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => SaleScanUserPage()));
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       // bottomNavigationBar: BottomAppBar(

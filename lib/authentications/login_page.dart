@@ -63,36 +63,28 @@ class _LoginPageState extends State<LoginPage> {
               key: _formKey,
               child: ListView(
                 children: <Widget>[
-                  // Container(
-                  //   child: ClipPath(
-                  //     child: Stack(
-                  //       fit: StackFit.expand,
-                  //       children: <Widget>[
-                  //         Container(
-                  //           decoration: BoxDecoration(color: Colors.brown),
-                  //         ),
-                  //         Container(
-                  //           child: Icon(Icons.adb),
-                  //         )
-                  //       ],
-                  //     ),
-                  //     clipper: Header(),
-                  //   ),
-                  // ),
-                  SizedBox(height: 20),
-                  _buildLogo(),
-                  SizedBox(height: 20),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Sign In',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subhead
-                          .copyWith(fontSize: 30, color: Pallete.primary),
-                    ),
+                  Stack(
+                    children: <Widget>[
+                      Container(
+                        child: Image.asset(
+                          "assets/BG.png",
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      _buildLogo(),
+                      Container(
+                        margin: EdgeInsets.only(top: 250),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Sign In',
+                          style: Theme.of(context)
+                              .textTheme
+                              .subhead
+                              .copyWith(fontSize: 22, color: Pallete.primary),
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 25),
                   _buildEmailField(),
                   SizedBox(height: 5),
                   _buildPasswordField(),
@@ -162,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          child: Text("Don't have an account?",
+          child: Text("Don't have an account? ",
               style:
                   Theme.of(context).textTheme.caption.copyWith(fontSize: 13)),
         ),
@@ -208,7 +200,10 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                 color: Pallete.primary,
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EnterPinLogin()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => EnterPinLogin()));
                 } //_validateAndSubmit,
                 ),
           ],
@@ -329,9 +324,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLogo() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 25),
+      margin: EdgeInsets.only(left: 25, right: 25, top: 80),
       alignment: Alignment.center,
-      height: 100,
+      height: 150,
       child: Image.asset(
         "assets/logo_v2.png",
         fit: BoxFit.cover,
@@ -349,23 +344,5 @@ class _LoginPageState extends State<LoginPage> {
   void hideSnackBar() {
     _scaffoldKey.currentState
         .hideCurrentSnackBar(reason: SnackBarClosedReason.timeout);
-  }
-}
-
-class Header extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = new Path();
-    path.lineTo(0.0, size.height - 380);
-    path.lineTo(size.width, size.height - 280);
-    path.lineTo(size.width, 0.0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    // TODO: implement shouldReclip
-    return false;
   }
 }

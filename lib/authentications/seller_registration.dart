@@ -20,36 +20,43 @@ class SellerRegistration extends StatelessWidget {
       ),
       body: Container(
         child: Form(
-            child: ListView(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            ExpansionTile(
-              children: <Widget>[
-                _buildRegisteredNameField(),
-                _buildBusinessNameField(),
-                _buildBusinessRegistationNumber(),
-                SizedBox(height: 20),
-              ],
-              title: Text(
-                'Business Details',
-                style: TextStyle(
-                    color: Pallete.primary, fontWeight: FontWeight.bold),
+            Expanded(
+              child: ListView(
+                children: <Widget>[
+                  ExpansionTile(
+                    children: <Widget>[
+                      _buildRegisteredNameField(),
+                      _buildBusinessNameField(),
+                      _buildBusinessRegistationNumber(),
+                      SizedBox(height: 20),
+                    ],
+                    title: Text(
+                      'Business Details',
+                      style: TextStyle(
+                          color: Pallete.primary, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ExpansionTile(
+                    children: <Widget>[
+                      _buildPhoneNumber(),
+                      _buildBusinessAddress(),
+                      _buildMailingAddress(),
+                    ],
+                    title: Text(
+                      'Contact Details',
+                      style: TextStyle(
+                          color: Pallete.primary, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
               ),
             ),
-            ExpansionTile(
-              children: <Widget>[
-                _buildPhoneNumber(),
-                _buildBusinessAddress(),
-                _buildMailingAddress(),
-              ],
-              title: Text(
-                'Contact Details',
-                style: TextStyle(
-                    color: Pallete.primary, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             _buildSignUpBtn(context),
-            SizedBox(height: 20),
           ],
         )),
       ),
@@ -280,7 +287,9 @@ class SellerRegistration extends StatelessWidget {
 
   Widget _buildSignUpBtn(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 40),
+        alignment: Alignment.centerRight,
+        margin: EdgeInsets.only(bottom: 20, right: 20),
+        width: MediaQuery.of(context).size.width / 1.3,
         height: 40,
         decoration:
             BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),

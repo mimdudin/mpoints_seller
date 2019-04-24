@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import './utils/pallete.dart';
 import './utils/my_icons.dart';
-import './pages/transaction_list_page.dart';
-import './pages/employee_list_page.dart';
+import './pages/transactions/transaction_list_page.dart';
+import './pages/employee/employee_list_page.dart';
+import './pages/sale/sale_scanUser_page.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -17,19 +18,31 @@ class _HomeState extends State<Home> {
       body: Container(
         child: ListView(
           children: <Widget>[
-            _buildWelcomeSeller(),
-            _buildLogo(),
-            _buildMenu('Transactions', Icons.history, _goToTransactionsPage),
-            SizedBox(height: 20),
-            _buildMenu('Employees', LineAwesomeIcons.user, _goToEmployeesPage)
+            Stack(
+              children: <Widget>[
+                Container(
+                  child: Image.asset(
+                    "assets/BG.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                _buildWelcomeSeller(),
+                _buildLogo(),
+                _buildMenu(
+                    'Transactions', Icons.history, _goToTransactionsPage, 250.0),
+                SizedBox(height: 20),
+                _buildMenu(
+                    'Employees', LineAwesomeIcons.user, _goToEmployeesPage, 400.0)
+              ],
+            ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        // onPressed: () => Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (BuildContext context) => ClaimPointsPage())),
+        onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => SaleScanUserPage())),
         tooltip: 'ADD',
         child: Icon(Icons.add, size: 40),
         backgroundColor: Pallete.primary,
@@ -39,22 +52,23 @@ class _HomeState extends State<Home> {
 
   Widget _buildWelcomeSeller() {
     return Container(
+      margin: EdgeInsets.only(top: 20),
       alignment: Alignment.center,
       child: Text(
         'Wellcome Groceries Go',
         style: Theme.of(context)
             .textTheme
             .subhead
-            .copyWith(fontSize: 24, color: Pallete.primary),
+            .copyWith(fontSize: 24, color: Colors.white),
       ),
     );
   }
 
   Widget _buildLogo() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 25),
+      margin: EdgeInsets.only(left: 25, right: 25, top: 80),
       alignment: Alignment.center,
-      height: 100,
+      height: 150,
       child: Image.asset(
         "assets/logo_v2.png",
         fit: BoxFit.cover,
@@ -62,11 +76,11 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildMenu(String title, IconData icon, Function method) {
+  Widget _buildMenu(String title, IconData icon, Function method, marginTop) {
     return GestureDetector(
       onTap: method,
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 40),
+        margin: EdgeInsets.only(left: 40, right: 40, top: marginTop),
         height: 130,
         child: Card(
           elevation: 2.0,
@@ -112,11 +126,17 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _goToTransactionsPage(){
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => TransactionListPage()));
+  void _goToTransactionsPage() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => TransactionListPage()));
   }
 
-  void _goToEmployeesPage(){
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => EmployeeListPage()));
+  void _goToEmployeesPage() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => EmployeeListPage()));
   }
 }

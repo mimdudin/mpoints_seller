@@ -41,15 +41,34 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Container(
-        alignment: Alignment.center,
         color: Colors.white,
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              SizedBox(height: 20),
-              _buildLogo(),
-              _buildLabel(),
+              Stack(
+                children: <Widget>[
+                  Container(
+                    child: Image.asset(
+                      "assets/BG.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  _buildLogo(),
+                  Container(
+                    margin: EdgeInsets.only(top: 250),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Enter PIN',
+                      style: Theme.of(context)
+                          .textTheme
+                          .subhead
+                          .copyWith(fontSize: 22, color: Pallete.primary),
+                    ),
+                  ),
+                ],
+              ),
               _buildPinForm()
             ],
           ),
@@ -60,9 +79,9 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
 
   Widget _buildLogo() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 25),
+      margin: EdgeInsets.only(left: 25, right: 25, top: 80),
       alignment: Alignment.center,
-      height: 100,
+      height: 150,
       child: Image.asset(
         "assets/logo_v2.png",
         fit: BoxFit.cover,
