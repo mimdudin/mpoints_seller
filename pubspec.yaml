@@ -30,6 +30,11 @@ dependencies:
       url: git://github.com/facundomedica/fast_qr_reader_view.git  
   rflutter_alert: ^1.0.2
   flutter_barcode_scanner: ^0.0.8
+  flutter_spinkit: ^3.1.0
+  firebase_auth: ^0.8.3
+  firebase_database: ^2.0.2
+  http: ^0.12.0+2
+
   
 dev_dependencies:
   flutter_test:

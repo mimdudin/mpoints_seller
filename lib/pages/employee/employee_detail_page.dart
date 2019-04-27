@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import '../../utils/pallete.dart';
+import '../../utils/strings.dart';
+import '../../utils/loading.dart';
+import '../../models/employee.dart';
+import '../../services/main_model.dart';
 
 class EmployeeDetailPage extends StatefulWidget {
+  final Employee employee;
+  final int i;
+  final Function showInSnackbar;
+
+  EmployeeDetailPage(this.employee, this.i, this.showInSnackbar);
+
   @override
   _EmployeeDetailPageState createState() => _EmployeeDetailPageState();
 }
@@ -10,50 +21,54 @@ class EmployeeDetailPage extends StatefulWidget {
 class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Text(
-            'Employee Details',
-            style: TextStyle(color: Pallete.primary),
-          ),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Pallete.primary),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        body: Container(
-          child: Form(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                ListView(
-                  shrinkWrap: true,
-                  children: <Widget>[
-                    ExpansionTile(
+    return ScopedModelDescendant<MainModel>(
+      builder: (context, child, model) {
+        return Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              title: Text(
+                Strings.employeeDetails,
+                style: TextStyle(color: Pallete.primary),
+              ),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back, color: Pallete.primary),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+            body: Container(
+              child: Form(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
-                        _buildTitleField(),
-                        _buildFirstNameField(),
-                        _buildLastNameField(),
-                        _buildPINnumber(),
-                        SizedBox(height: 20),
+                    ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                        ExpansionTile(
+                          children: <Widget>[
+                            _buildTitleField(widget.employee),
+                            _buildFirstNameField(widget.employee),
+                            _buildLastNameField(widget.employee),
+                            _buildPINnumber(widget.employee),
+                            SizedBox(height: 20),
+                          ],
+                          title: Text(
+                            Strings.basicDetails,
+                            style: TextStyle(
+                                color: Pallete.primary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
                       ],
-                      title: Text(
-                        'Basic Details',
-                        style: TextStyle(
-                            color: Pallete.primary,
-                            fontWeight: FontWeight.bold),
-                      ),
                     ),
-                  ],
-                ),
-                _buildNextBtn(),
-              ])),
-        ));
+                    _buildDeleteBtn(model),
+                  ])),
+            ));
+      },
+    );
   }
 
-  Widget _buildTitleField() {
+  Widget _buildTitleField(Employee employee) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
         child: Container(
@@ -61,17 +76,17 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
             autofocus: false,
             // controller: _emailController,
             cursorColor: Pallete.primary,
-            initialValue: 'Mr.',
+            initialValue: employee?.title,
             enabled: false,
             style: TextStyle(color: Pallete.primary),
             decoration: InputDecoration(
-              hintText: 'enter title employee',
-              labelText: 'Title',
-              hintStyle: TextStyle(
-                  color: Color(0xffb7b7b7),
-                  height: 1.4,
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w500),
+              // hintText: 'enter title employee',
+              labelText: Strings.title,
+              // hintStyle: TextStyle(
+              //     color: Color(0xffb7b7b7),
+              //     height: 1.4,
+              //     fontSize: 13.0,
+              //     fontWeight: FontWeight.w500),
               labelStyle: TextStyle(
                   color: Colors.black54,
                   height: 1.2,
@@ -93,25 +108,25 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
         ));
   }
 
-  Widget _buildFirstNameField() {
+  Widget _buildFirstNameField(Employee employee) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
         child: Container(
           child: TextFormField(
             enabled: false,
-            initialValue: 'Gino',
+            initialValue: employee?.firstName,
             style: TextStyle(color: Pallete.primary),
             autofocus: false,
             // controller: _emailController,
             cursorColor: Pallete.primary,
             decoration: InputDecoration(
-              hintText: 'enter first name',
-              labelText: 'First Name',
-              hintStyle: TextStyle(
-                  color: Color(0xffb7b7b7),
-                  height: 1.4,
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w500),
+              // hintText: 'enter first name',
+              labelText: Strings.firstName,
+              // hintStyle: TextStyle(
+              //     color: Color(0xffb7b7b7),
+              //     height: 1.4,
+              //     fontSize: 13.0,
+              //     fontWeight: FontWeight.w500),
               labelStyle: TextStyle(
                   color: Colors.black54,
                   height: 1.2,
@@ -133,25 +148,25 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
         ));
   }
 
-  Widget _buildLastNameField() {
+  Widget _buildLastNameField(Employee employee) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
         child: Container(
           child: TextFormField(
             enabled: false,
-            initialValue: 'Furcy',
+            initialValue: employee?.lastName,
             style: TextStyle(color: Pallete.primary),
             autofocus: false,
             // controller: _emailController,
             cursorColor: Pallete.primary,
             decoration: InputDecoration(
-              hintText: 'enter last name',
-              labelText: 'Last Name',
-              hintStyle: TextStyle(
-                  color: Color(0xffb7b7b7),
-                  height: 1.4,
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w500),
+              // hintText: 'enter last name',
+              labelText: Strings.lastName,
+              // hintStyle: TextStyle(
+              //     color: Color(0xffb7b7b7),
+              //     height: 1.4,
+              //     fontSize: 13.0,
+              //     fontWeight: FontWeight.w500),
               labelStyle: TextStyle(
                   color: Colors.black54,
                   height: 1.2,
@@ -173,25 +188,25 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
         ));
   }
 
-  Widget _buildPINnumber() {
+  Widget _buildPINnumber(Employee employee) {
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 0.0),
         child: Container(
           child: TextFormField(
             enabled: false,
-            initialValue: '252352',
+            initialValue: employee?.pin,
             style: TextStyle(color: Pallete.primary),
             autofocus: false,
             // controller: _emailController,
             cursorColor: Pallete.primary,
             decoration: InputDecoration(
-              hintText: 'enter pin number',
-              labelText: 'PIN Number',
-              hintStyle: TextStyle(
-                  color: Color(0xffb7b7b7),
-                  height: 1.4,
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w500),
+              // hintText: 'enter pin number',
+              labelText: Strings.pinNumber,
+              // hintStyle: TextStyle(
+              //     color: Color(0xffb7b7b7),
+              //     height: 1.4,
+              //     fontSize: 13.0,
+              //     fontWeight: FontWeight.w500),
               labelStyle: TextStyle(
                   color: Colors.black54,
                   height: 1.2,
@@ -213,64 +228,40 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
         ));
   }
 
-  Widget _buildNextBtn() {
+  Widget _buildDeleteBtn(MainModel model) {
     return Container(
-      alignment: Alignment.centerRight,
-      height: 40,
-      margin: EdgeInsets.only(bottom: 20, right: 20),
-      width: MediaQuery.of(context).size.width / 1.3,
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(100))),
-        child: Text(
-          'delete',
-          // Strings.next,
-          style: Theme.of(context)
-              .textTheme
-              .button
-              .copyWith(fontSize: 16, color: Colors.white),
-        ),
-        color: Pallete.primary,
-        onPressed: () {
-          // setState(() {
-          //   if (_partNumController.text.isNotEmpty) {
-          //     if (widget.model.partnerList
-          //             .where(
-          //                 (partner) => partner.partnerNumber == _partnerNumber)
-          //             .toList()
-          //             .length >
-          //         0) {
-          //       _validate = false;
-
-          //       // var mpoints = int.parse(widget.purchaseAmount) * 10 / 100;
-          //       // print(mpoints.toString());
-
-          //       // var socialPoints = int.parse(widget.purchaseAmount) * 1 / 100;
-          //       // print(socialPoints.toString());
-
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (BuildContext context) => ClaimSummaryPage(
-          //                   int.parse(widget.purchaseAmount),
-          //                   // mpoints,
-          //                   // socialPoints,
-          //                   _partnerNumber)));
-          //       _partNumController.clear();
-          //     } else {
-          //       _validate = false;
-
-          //       _buildAlert(context);
-          //       _partNumController.clear();
-          //     }
-          //   } else {
-          //     _validate = true;
-          //   }
-          // });
-        },
-      ),
-    );
+        alignment: Alignment.centerRight,
+        margin: EdgeInsets.only(bottom: 20, right: 20),
+        width: MediaQuery.of(context).size.width / 1.3,
+        height: 40,
+        decoration:
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(100))),
+              child: model.isLoadingUser
+                  ? LoadingCircular10()
+                  : Text(
+                      Strings.delete,
+                      style: Theme.of(context)
+                          .textTheme
+                          .button
+                          .copyWith(fontSize: 16, color: Colors.white),
+                    ),
+              color: Pallete.primary,
+              onPressed: () {
+                model.selectedEmployee(widget.i);
+                model.deleteEmployee().then((_) {
+                  Navigator.of(context).pop();
+                  widget.showInSnackbar(
+                      '${widget.employee.firstName} ${widget.employee.firstName} removed in Employees.');
+                });
+              },
+            ),
+          ],
+        ));
   }
 }

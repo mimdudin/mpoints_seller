@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-// import '../utils/phone_input_formatter.dart';
 import '../utils/pallete.dart';
 import '../utils/strings.dart';
-import '../authentications/create_pin_signup.dart';
-import '../authentications/seller_registration.dart';
-// import '../utils/circular_loading.dart';
-// import '../pages/terms_privacy_page.dart';
-// import './auth.dart';
+import '../utils/loading.dart';
+import './seller_registration.dart';
+import './auth.dart';
+import './signup_success_page.dart';
 
 class SignupPage extends StatefulWidget {
-  // final BaseAuth auth;
+  final BaseAuth auth;
   // final VoidCallback onSignedIn;
 
-  // SignupPage({this.auth, this.onSignedIn});
+  SignupPage({this.auth});
+
   @override
   _SignupPageState createState() => _SignupPageState();
 }
@@ -63,28 +61,12 @@ class _SignupPageState extends State<SignupPage> {
               key: _formKey,
               child: ListView(
                 children: <Widget>[
-
                   Stack(
                     children: <Widget>[
-                      Container(
-                        child: Image.asset(
-                          "assets/BG.png",
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      _buildBackground(),
                       _buildBackBtn(context),
                       _buildLogo(),
-                      Container(
-                        margin: EdgeInsets.only(top: 250),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Sign Up',
-                          style: Theme.of(context)
-                              .textTheme
-                              .subhead
-                              .copyWith(fontSize: 22, color: Pallete.primary),
-                        ),
-                      ),
+                      _buildSignUpLabel(),
                     ],
                   ),
 
@@ -95,8 +77,6 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(height: 15),
                   _buildSignUpBtn(),
                   // SizedBox(height: 20),
-                  // _buildLabelTerms(),
-                  // SizedBox(height: 20),
                 ],
               ),
             ),
@@ -106,47 +86,71 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  // void _validateAndSubmit() async {
-  //   if (!_formKey.currentState.validate()) {
-  //     return;
-  //   }
+  void _validateAndSubmit() async {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
 
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
+    setState(() {
+      _isLoading = true;
+    });
 
-  //   _formKey.currentState.save();
+    _formKey.currentState.save();
 
-  //   try {
-  //     await widget.auth
-  //         .createUserWithEmailPassword(
-  //             _email, _password, _firstName, _lastName, _phoneNumber, "")
-  //         .then((user) {
-  //       print("Registered User ${user.uid}");
-  //       widget.onSignedIn();
+    try {
+      await widget.auth
+          .createUserWithEmailPassword(_email, _password)
+          .then((user) {
+        print("Registered User ${user.uid}");
+        // widget.onSignedIn();
 
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
+        setState(() {
+          _isLoading = false;
+        });
 
-  //       Navigator.pop(context);
-  //       _firstController.clear();
-  //       _lastController.clear();
-  //       _phoneController.clear();
-  //       _emailController.clear();
-  //       _passwordController.clear();
-  //     });
-  //   } on PlatformException catch (e) {
-  //     if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
-  //       showInSnackBar("Email address is already use by another account.");
-  //       print(e.code);
-  //     }
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //     print("Error: $e");
-  //   }
-  // }
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    SellerRegistration(user.uid, _email, 'NotSignUp')));
+
+        _emailController.clear();
+        _passwordController.clear();
+      });
+    } on PlatformException catch (e) {
+      if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+        showInSnackBar(Strings.emailAlregistered);
+        print(e.code);
+      }
+      setState(() {
+        _isLoading = false;
+      });
+      print("Error: $e");
+    }
+  }
+
+  Widget _buildBackground() {
+    return Container(
+      child: Image.asset(
+        "assets/BG.png",
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _buildSignUpLabel() {
+    return Container(
+      margin: EdgeInsets.only(top: 250),
+      alignment: Alignment.center,
+      child: Text(
+        Strings.signUp,
+        style: Theme.of(context)
+            .textTheme
+            .subhead
+            .copyWith(fontSize: 22, color: Pallete.primary),
+      ),
+    );
+  }
 
   Widget _buildBackBtn(BuildContext context) {
     return Container(
@@ -162,34 +166,6 @@ class _SignupPageState extends State<SignupPage> {
         ));
   }
 
-  Widget _buildLabelTerms() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          child: Text(Strings.labelSignin,
-              style:
-                  Theme.of(context).textTheme.caption.copyWith(fontSize: 13)),
-        ),
-        GestureDetector(
-          onTap: () {
-            // Navigator.push(
-            //     context,
-            //     MaterialPageRoute(
-            //         builder: (BuildContext context) => TermsPrivacyPage()));
-          },
-          child: Container(
-            child: Text(Strings.signIn,
-                style: TextStyle(
-                    fontSize: 15.0,
-                    color: Pallete.primary,
-                    fontWeight: FontWeight.w500)),
-          ),
-        )
-      ],
-    );
-  }
-
   Widget _buildSignUpBtn() {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 40),
@@ -203,22 +179,16 @@ class _SignupPageState extends State<SignupPage> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(100))),
                 child: _isLoading
-                    ? CircularProgressIndicator()
+                    ? LoadingCircular10()
                     : Text(
-                        'Sign Up',
+                        Strings.signUp,
                         style: Theme.of(context)
                             .textTheme
                             .button
                             .copyWith(fontSize: 16, color: Colors.white),
                       ),
                 color: Pallete.primary,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              SellerRegistration()));
-                } //_validateAndSubmit,
+                onPressed: _validateAndSubmit //_validateAndSubmit,
                 ),
           ],
         ));
@@ -233,7 +203,7 @@ class _SignupPageState extends State<SignupPage> {
             controller: _emailController,
             cursorColor: Pallete.primary,
             decoration: InputDecoration(
-              hintText: 'Email',
+              hintText: Strings.email,
               hintStyle: TextStyle(
                   color: Color(0xffb7b7b7),
                   height: 1.5,
@@ -247,7 +217,7 @@ class _SignupPageState extends State<SignupPage> {
               if (value.isEmpty ||
                   !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                       .hasMatch(value)) {
-                return 'Please enter valid email.';
+                return Strings.validEmail;
               }
             },
             onSaved: (value) => _email = value,
@@ -265,7 +235,7 @@ class _SignupPageState extends State<SignupPage> {
             controller: _passwordController,
             cursorColor: Pallete.primary,
             decoration: InputDecoration(
-              hintText: 'Password',
+              hintText: Strings.password,
               hintStyle: TextStyle(
                   color: Color(0xffb7b7b7),
                   height: 1.5,
@@ -287,7 +257,7 @@ class _SignupPageState extends State<SignupPage> {
             maxLines: 1,
             validator: (value) {
               if (value.isEmpty || value.length < 6) {
-                return 'enter password';
+                return Strings.minPassword;
               }
             },
             onSaved: (value) => _password = value,
@@ -317,23 +287,5 @@ class _SignupPageState extends State<SignupPage> {
   void hideSnackBar() {
     _scaffoldKey.currentState
         .hideCurrentSnackBar(reason: SnackBarClosedReason.timeout);
-  }
-}
-
-class Header extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = new Path();
-    path.lineTo(0.0, size.height - 380);
-    path.lineTo(size.width, size.height - 280);
-    path.lineTo(size.width, 0.0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    // TODO: implement shouldReclip
-    return false;
   }
 }

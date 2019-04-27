@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import '../utils/pallete.dart';
+import '../utils/strings.dart';
+import '../authentications/auth.dart';
 import '../home.dart';
+import '../authentications/login_page.dart';
+import '../utils/loading.dart';
+import '../services/main_model.dart';
 
 class EnterPinLogin extends StatefulWidget {
+  final Auth auth;
+  final VoidCallback onSignedOut, onSignedIn;
+  final MainModel model;
+
+  EnterPinLogin({this.auth, this.onSignedOut, this.onSignedIn, this.model});
+
   @override
   _EnterPinLoginState createState() => _EnterPinLoginState();
 }
@@ -31,8 +44,25 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
   );
 
   @override
+  void initState() {
+    super.initState();
+
+    loadData();
+  }
+
+  Future loadData() async {
+    await widget.auth.currentUser().then((currentUser) {
+      widget.model.fetchUserById(currentUser.uid).then((user) {
+        if (user.pin == '' && user.name != '')
+          _goToLoginPage();
+        else if (user.name == '' && user.pin == '') _goToSellerRegistrationPage();
+      });
+      print(currentUser);
+    });
+  }
+
+  @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
 
     _pinEditingController.dispose();
@@ -40,39 +70,56 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        color: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              Stack(
+    return ScopedModelDescendant<MainModel>(
+      builder: (context, child, model) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Container(
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
                 children: <Widget>[
-                  Container(
-                    child: Image.asset(
-                      "assets/BG.png",
-                      fit: BoxFit.cover,
-                    ),
+                  Stack(
+                    children: <Widget>[
+                      _buildBackground(),
+                      _buildLogo(),
+                      _buildPINlabel(),
+                    ],
                   ),
-                  _buildLogo(),
                   Container(
-                    margin: EdgeInsets.only(top: 250),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Enter PIN',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subhead
-                          .copyWith(fontSize: 22, color: Pallete.primary),
-                    ),
-                  ),
+                    margin: EdgeInsets.only(top: 32),
+                    child: model.isLoadingUser
+                        ? LoadingCircular25()
+                        : _buildPinForm(model),
+                  )
                 ],
               ),
-              _buildPinForm()
-            ],
+            ),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBackground() {
+    return Container(
+      child: Image.asset(
+        "assets/BG.png",
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _buildPINlabel() {
+    return Container(
+      margin: EdgeInsets.only(top: 250),
+      alignment: Alignment.center,
+      child: Text(
+        Strings.enterPIN,
+        style: Theme.of(context)
+            .textTheme
+            .subhead
+            .copyWith(fontSize: 22, color: Pallete.primary),
       ),
     );
   }
@@ -89,35 +136,69 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
     );
   }
 
-  Widget _buildLabel() {
-    return Container(
-      alignment: Alignment.center,
-      child: Text(
-        'Enter PIN',
-        style: Theme.of(context)
-            .textTheme
-            .title
-            .copyWith(fontSize: 16, color: Pallete.primary),
-      ),
-    );
-  }
-
-  Widget _buildPinForm() {
+  Widget _buildPinForm(MainModel model) {
     return Padding(
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       child: PinInputTextField(
         pinLength: _pinLength,
         decoration: _pinDecoration,
         pinEditingController: _pinEditingController,
-        autoFocus: true,
+        autoFocus: false,
         textInputAction: TextInputAction.go,
         onSubmit: (pin) {
+          setState(() {
+            if (pin.isEmpty) {
+              _buildAlert(context);
+              _pinEditingController.clear();
+            } else {
+              if (pin != model.user.pin) {
+                _buildAlert(context);
+                _pinEditingController.clear();
+              } else {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Home(
+                              auth: widget.auth,
+                              model: widget.model,
+                              onSignedOut: widget.onSignedOut,
+                            )));
+                _pinEditingController.clear();
+              }
+            }
+          });
           debugPrint('submit pin:$pin');
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (BuildContext context) => Home()));
-          _pinEditingController.clear();
         },
       ),
     );
+  }
+
+  // Alert with single button.
+  _buildAlert(context) {
+    Alert(
+      context: context,
+      type: AlertType.error,
+      title: Strings.invalidPIN,
+      // desc: Strings.notEnoughMPDesc,
+      buttons: [
+        DialogButton(
+          color: Pallete.primary,
+          child: Text(
+            "OKAY",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        )
+      ],
+    ).show();
+  }
+
+  void _goToLoginPage() {
+    Navigator.pushReplacementNamed(context, '/main');
+  }
+
+  void _goToSellerRegistrationPage() {
+    Navigator.pushReplacementNamed(context, '/seller_registration');
   }
 }

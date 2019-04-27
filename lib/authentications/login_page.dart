@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-// import '../utils/phone_input_formatter.dart';
 import '../utils/pallete.dart';
 import '../utils/strings.dart';
 import '../authentications/enter_pin_login.dart';
+import '../utils/loading.dart';
 import '../authentications/signup_page.dart';
-// import '../utils/circular_loading.dart';
-// import '../pages/terms_privacy_page.dart';
-// import './auth.dart';
+import '../utils/loading.dart';
+import './auth.dart';
 
 class LoginPage extends StatefulWidget {
-  // final BaseAuth auth;
-  // final VoidCallback onSignedIn;
+  final BaseAuth auth;
+  final VoidCallback onSignedIn;
 
-  // LoginPage({this.auth, this.onSignedIn});
+  LoginPage({this.auth, this.onSignedIn});
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -23,15 +22,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var _emailController = TextEditingController();
   var _passwordController = TextEditingController();
+  var _forgotPassController = TextEditingController();
 
   var _emailFocusNode = FocusNode();
   var _passwordFocusNode = FocusNode();
 
   String _email;
   String _password;
+  String _forgotEmail;
 
   bool _obscureText;
   bool _isLoading;
+  bool _validate;
 
   var _formKey = GlobalKey<FormState>();
   var _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -42,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
     _obscureText = true;
     _isLoading = false;
+    _validate = false;
   }
 
   @override
@@ -50,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
 
     _emailController.dispose();
     _passwordController.dispose();
+    _forgotPassController.dispose();
   }
 
   @override
@@ -65,38 +69,20 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   Stack(
                     children: <Widget>[
-                      Container(
-                        child: Image.asset(
-                          "assets/BG.png",
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      _buildBackground(),
                       _buildLogo(),
-                      Container(
-                        margin: EdgeInsets.only(top: 250),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Sign In',
-                          style: Theme.of(context)
-                              .textTheme
-                              .subhead
-                              .copyWith(fontSize: 22, color: Pallete.primary),
-                        ),
-                      ),
+                      _buildSignInLabel(),
                     ],
                   ),
                   _buildEmailField(),
                   SizedBox(height: 5),
                   _buildPasswordField(),
                   SizedBox(height: 15),
-                  _buildSignUpBtn(),
+                  _buildSignInBtn(),
                   SizedBox(height: 25),
-
-                  _buildForgotSignInBtn(),
+                  _buildForgotPass(),
                   SizedBox(height: 15),
-
-                  // SizedBox(height: 20),
-                  _buildLabelTerms(),
+                  _buildDontHaveAcc(),
                   // SizedBox(height: 20),
                 ],
               ),
@@ -107,54 +93,74 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // void _validateAndSubmit() async {
-  //   if (!_formKey.currentState.validate()) {
-  //     return;
-  //   }
+  void _validateAndSubmit() async {
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
 
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
+    setState(() {
+      _isLoading = true;
+    });
 
-  //   _formKey.currentState.save();
+    _formKey.currentState.save();
 
-  //   try {
-  //     await widget.auth
-  //         .createUserWithEmailPassword(
-  //             _email, _password, _firstName, _lastName, _phoneNumber, "")
-  //         .then((user) {
-  //       print("Registered User ${user.uid}");
-  //       widget.onSignedIn();
+    try {
+      await widget.auth
+          .signInWithEmailAndPassword(_email, _password)
+          .then((user) {
+        print("Signed In ${user.uid}");
+        widget.onSignedIn();
 
-  //       setState(() {
-  //         _isLoading = false;
-  //       });
+        setState(() {
+          _isLoading = false;
+        });
 
-  //       Navigator.pop(context);
-  //       _firstController.clear();
-  //       _lastController.clear();
-  //       _phoneController.clear();
-  //       _emailController.clear();
-  //       _passwordController.clear();
-  //     });
-  //   } on PlatformException catch (e) {
-  //     if (e.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
-  //       showInSnackBar("Email address is already use by another account.");
-  //       print(e.code);
-  //     }
-  //     setState(() {
-  //       _isLoading = false;
-  //     });
-  //     print("Error: $e");
-  //   }
-  // }
+        _emailController.clear();
+        _passwordController.clear();
+      });
+    } on PlatformException catch (e) {
+      if (e.code == 'ERROR_WRONG_PASSWORD') {
+        showInSnackBar(Strings.errorEmailPass);
+        print(e.code);
+      } else if (e.code == 'ERROR_USER_NOT_FOUND') {
+        showInSnackBar(Strings.errorNotUser);
+        print(e.code);
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
-  Widget _buildLabelTerms() {
+  Widget _buildSignInLabel() {
+    return Container(
+      margin: EdgeInsets.only(top: 250),
+      alignment: Alignment.center,
+      child: Text(
+        Strings.signIn,
+        style: Theme.of(context)
+            .textTheme
+            .subhead
+            .copyWith(fontSize: 22, color: Pallete.primary),
+      ),
+    );
+  }
+
+  Widget _buildBackground() {
+    return Container(
+      child: Image.asset(
+        "assets/BG.png",
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _buildDontHaveAcc() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          child: Text("Don't have an account? ",
+          child: Text(Strings.dontHaveAcc,
               style:
                   Theme.of(context).textTheme.caption.copyWith(fontSize: 13)),
         ),
@@ -163,10 +169,11 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (BuildContext context) => SignupPage()));
+                    builder: (BuildContext context) =>
+                        SignupPage(auth: widget.auth)));
           },
           child: Container(
-            child: Text('Sign Up',
+            child: Text(Strings.signUp,
                 style: TextStyle(
                     fontSize: 15.0,
                     color: Pallete.primary,
@@ -177,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildSignUpBtn() {
+  Widget _buildSignInBtn() {
     return Container(
         padding: EdgeInsets.symmetric(horizontal: 40),
         height: 40,
@@ -190,21 +197,16 @@ class _LoginPageState extends State<LoginPage> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(100))),
                 child: _isLoading
-                    ? CircularProgressIndicator()
+                    ? LoadingCircular10()
                     : Text(
-                        'Sign In',
+                        Strings.signIn,
                         style: Theme.of(context)
                             .textTheme
                             .button
                             .copyWith(fontSize: 16, color: Colors.white),
                       ),
                 color: Pallete.primary,
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => EnterPinLogin()));
-                } //_validateAndSubmit,
+                onPressed: _validateAndSubmit //_validateAndSubmit,
                 ),
           ],
         ));
@@ -219,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
             controller: _emailController,
             cursorColor: Pallete.primary,
             decoration: InputDecoration(
-              hintText: 'Email',
+              hintText: Strings.email,
               hintStyle: TextStyle(
                   color: Color(0xffb7b7b7),
                   height: 1.5,
@@ -233,7 +235,7 @@ class _LoginPageState extends State<LoginPage> {
               if (value.isEmpty ||
                   !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                       .hasMatch(value)) {
-                return 'Please enter valid email.';
+                return Strings.validEmail;
               }
             },
             onSaved: (value) => _email = value,
@@ -251,7 +253,7 @@ class _LoginPageState extends State<LoginPage> {
             controller: _passwordController,
             cursorColor: Pallete.primary,
             decoration: InputDecoration(
-              hintText: 'Password',
+              hintText: Strings.password,
               hintStyle: TextStyle(
                   color: Color(0xffb7b7b7),
                   height: 1.5,
@@ -273,7 +275,7 @@ class _LoginPageState extends State<LoginPage> {
             maxLines: 1,
             validator: (value) {
               if (value.isEmpty || value.length < 6) {
-                return 'enter password';
+                return Strings.validPassword;
               }
             },
             onSaved: (value) => _password = value,
@@ -281,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
         ));
   }
 
-  Widget _buildForgotSignInBtn() {
+  Widget _buildForgotPass() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 40),
       child: Row(
@@ -295,28 +297,8 @@ class _LoginPageState extends State<LoginPage> {
                   color: Pallete.primary,
                   fontStyle: FontStyle.italic),
             ),
-            // onTap: _showDialog,
+            onTap: _showDialog,
           ),
-          // Container(
-          //   height: 40,
-          //   decoration: BoxDecoration(
-          //       borderRadius: BorderRadius.all(Radius.circular(100))),
-          //   child: RaisedButton(
-          //     shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.all(Radius.circular(100))),
-          //     child: _isLoading
-          //         ? CircularProgressIndicator()
-          //         : Text(
-          //             Strings.signIn,
-          //             style: Theme.of(context)
-          //                 .textTheme
-          //                 .button
-          //                 .copyWith(fontSize: 16, color: Colors.white),
-          //           ),
-          //     color: Pallete.primary,
-          //     // onPressed: _validateAndSubmit,
-          //   ),
-          // ),
         ],
       ),
     );
@@ -344,5 +326,75 @@ class _LoginPageState extends State<LoginPage> {
   void hideSnackBar() {
     _scaffoldKey.currentState
         .hideCurrentSnackBar(reason: SnackBarClosedReason.timeout);
+  }
+
+  void _showDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(Strings.resetPassDesc),
+            content: Container(
+                child: TextField(
+              controller: _forgotPassController,
+              // focusNode: _forgotFocusNode,
+              decoration: InputDecoration(
+                  hintStyle:
+                      TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                  hintText: Strings.hintEmail,
+                  errorText: _validate ? Strings.validEmail : null),
+              onChanged: (v) => _forgotEmail = v,
+            )),
+            actions: <Widget>[
+              // model.isLoading
+              //     ? SpinKitFadingCube(
+              //         color: Colors.orange,
+              //         size: 30,
+              //       )
+              //     :
+              // usually buttons at the bottom of the dialog
+              // FlatButton(
+              //   child: new Text("CANCEL"),
+              //   onPressed: () {
+              //     Navigator.of(context).pop();
+              //   },
+              // ),
+              FlatButton(
+                  child: Text(
+                    "OK",
+                    style: Theme.of(context)
+                        .textTheme
+                        .button
+                        .copyWith(color: Pallete.primary),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if (_forgotPassController.text.isEmpty ||
+                          !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                              .hasMatch(_forgotPassController.text)) {
+                        _validate = true;
+                      } else {
+                        _validate = false;
+
+                        print(_forgotEmail);
+                        _requestForgotPassword();
+                        Navigator.of(context).pop();
+                        _forgotPassController.clear();
+                      }
+                    });
+                  })
+            ],
+          );
+        });
+  }
+
+  Future<void> _requestForgotPassword() async {
+    try {
+      await widget.auth.forgotPassword(_forgotEmail);
+      showInSnackBar(Strings.requestingPass);
+    } catch (e) {
+      showInSnackBar(Strings.errorRequestPass);
+      print("Error $e");
+    }
   }
 }

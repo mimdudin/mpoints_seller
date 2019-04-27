@@ -1,66 +1,103 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 import './utils/pallete.dart';
 import './utils/my_icons.dart';
 import './pages/transactions/transaction_list_page.dart';
 import './pages/employee/employee_list_page.dart';
 import './pages/sale/sale_scanUser_page.dart';
+import './services/main_model.dart';
+import './authentications/auth.dart';
+import './utils/strings.dart';
 
 class Home extends StatefulWidget {
+  final VoidCallback onSignedOut;
+  final MainModel model;
+  final Auth auth;
+
+  Home({this.auth, this.onSignedOut, this.model});
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: ListView(
-          children: <Widget>[
-            Stack(
+    return ScopedModelDescendant<MainModel>(
+      builder: (context, child, model) {
+        return Scaffold(
+          key: _scaffoldKey,
+          body: Container(
+            child: ListView(
               children: <Widget>[
-                Container(
-                  child: Image.asset(
-                    "assets/BG.png",
-                    fit: BoxFit.cover,
-                  ),
+                Stack(
+                  children: <Widget>[
+                    _buildBackground(),
+                    _buildWelcomeSeller(model),
+                    _buildLogo(),
+                    _buildMenu(Strings.transactions, Icons.history,
+                        _goToTransactionsPage, 250.0),
+                    SizedBox(height: 20),
+                    _buildMenu(Strings.employees, LineAwesomeIcons.user,
+                        _goToEmployeesPage, 400.0)
+                  ],
                 ),
-                _buildWelcomeSeller(),
-                _buildLogo(),
-                _buildMenu(
-                    'Transactions', Icons.history, _goToTransactionsPage, 250.0),
-                SizedBox(height: 20),
-                _buildMenu(
-                    'Employees', LineAwesomeIcons.user, _goToEmployeesPage, 400.0)
               ],
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => SaleScanUserPage())),
-        tooltip: 'ADD',
-        child: Icon(Icons.add, size: 40),
-        backgroundColor: Pallete.primary,
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        SaleScanUserPage(model, showInSnackBar))),
+            tooltip: 'ADD',
+            child: Icon(Icons.add, size: 40),
+            backgroundColor: Pallete.primary,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBackground() {
+    return Container(
+      child: Image.asset(
+        "assets/BG.png",
+        fit: BoxFit.cover,
       ),
     );
   }
 
-  Widget _buildWelcomeSeller() {
-    return Container(
-      margin: EdgeInsets.only(top: 20),
-      alignment: Alignment.center,
-      child: Text(
-        'Wellcome Groceries Go',
-        style: Theme.of(context)
-            .textTheme
-            .subhead
-            .copyWith(fontSize: 24, color: Colors.white),
-      ),
+  Widget _buildWelcomeSeller(MainModel model) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: 20),
+          alignment: Alignment.center,
+          child: Text(
+            "Welcome ${model.user?.name}",
+            style: Theme.of(context)
+                .textTheme
+                .subhead
+                .copyWith(fontSize: 24, color: Colors.white),
+          ),
+        ),
+        Positioned(
+          right: 5.0,
+          top: 8,
+          child: IconButton(
+              icon: Icon(
+                LineAwesomeIcons.signOut,
+                color: Colors.white,
+                size: 28,
+              ),
+              onPressed: () => showInSnackBar('This is logout.')),
+        )
+      ],
     );
   }
 
@@ -138,5 +175,21 @@ class _HomeState extends State<Home> {
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => EmployeeListPage()));
+  }
+
+  Future<void> _signOut() async {
+    try {
+      await widget.auth.signOut();
+      widget.onSignedOut();
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  void showInSnackBar(String message) {
+    if (_scaffoldKey.currentState != null) {
+      _scaffoldKey.currentState
+          .showSnackBar(new SnackBar(content: new Text(message)));
+    }
   }
 }

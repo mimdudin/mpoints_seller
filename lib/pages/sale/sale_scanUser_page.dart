@@ -4,19 +4,21 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:fast_qr_reader_view/fast_qr_reader_view.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-import './sale_scanProduct_page.dart';
+import './sale_summary_page.dart';
 import '../../utils/pallete.dart';
 import '../../utils/my_icons.dart';
+import '../../utils/loading.dart';
 import '../../utils/strings.dart';
+import '../../services/main_model.dart';
 
 void logError(String code, String message) =>
     print('Error: $code\nError Message: $message');
 
 class SaleScanUserPage extends StatefulWidget {
-  // final MainModel model;
-  // final String purchaseAmount;
+  final MainModel model;
+  final Function showInSnackBar;
 
-  // SaleScanUserPage(this.model, this.purchaseAmount);
+  SaleScanUserPage(this.model, this.showInSnackBar);
 
   @override
   _SaleScanUserPageState createState() => new _SaleScanUserPageState();
@@ -30,10 +32,10 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
   List<CameraDescription> cameras = [];
   Animation<double> verticalPosition;
 
-  var _partNumController = TextEditingController();
+  var _customerNumController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var _validate = false;
-  String _partnerNumber;
+  String _customerNumber;
 
   @override
   void initState() {
@@ -44,7 +46,7 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
 
   @override
   void dispose() {
-    _partNumController?.dispose();
+    _customerNumController?.dispose();
     animationController?.stop();
     animationController?.dispose();
     controller?.stopScanning();
@@ -87,53 +89,47 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
 
   @override
   Widget build(BuildContext context) {
-    // return ScopedModelDescendant<MainModel>(
-    //   builder: (context, child, model) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          'Select Customer',
-          style: TextStyle(color: Pallete.primary),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Pallete.primary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: <Widget>[
-          Container(
-            margin: EdgeInsets.only(right: 10),
-            child: Icon(LineAwesomeIcons.userAdd, color: Colors.grey),
+    return ScopedModelDescendant<MainModel>(builder: (context, child, model) {
+      return Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Text(
+            Strings.selectCustomer,
+            style: TextStyle(color: Pallete.primary),
           ),
-        ],
-      ),
-      key: _scaffoldKey,
-      body: Container(
-        child: ListView(
-          children: <Widget>[
-            // SizedBox(height: 5),
-            // _buildBackBtn(context),
-            // SizedBox(height: 20),
-            // _buildQRandOrLabel('QR scanner'),
-            SizedBox(height: 40),
-            _buildQRScanner(),
-            SizedBox(height: 25),
-            _buildQRandOrLabel('Or'),
-            SizedBox(height: 25),
-            Column(
-              children: <Widget>[
-                _buildAmountField(),
-                SizedBox(height: 30),
-                _buildNextBtn()
-              ],
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Pallete.primary),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          actions: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 10),
+              child: Icon(LineAwesomeIcons.userAdd, color: Colors.grey),
             ),
-            SizedBox(height: 25),
           ],
         ),
-      ),
-    );
-    //   },
-    // );
+        body: Container(
+          child: ListView(
+            children: <Widget>[
+              SizedBox(height: 40),
+              _buildQRScanner(),
+              SizedBox(height: 25),
+              _buildQRandOrLabel('Or'),
+              SizedBox(height: 25),
+              Column(
+                children: <Widget>[
+                  _buildCustomerNumField(),
+                  SizedBox(height: 30),
+                  _buildNextBtn(model)
+                ],
+              ),
+              SizedBox(height: 25),
+            ],
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildQRScanner() {
@@ -182,65 +178,64 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
     );
   }
 
-  Widget _buildNextBtn() {
+  Widget _buildNextBtn(MainModel model) {
     return Container(
-      alignment: Alignment.centerRight,
-      height: 40,
-      width: MediaQuery.of(context).size.width / 1.3,
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(100))),
-        child: Text(
-          'next',
-          // Strings.next,
-          style: Theme.of(context)
-              .textTheme
-              .button
-              .copyWith(fontSize: 16, color: Colors.white),
-        ),
-        color: Pallete.primary,
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SaleScanProductPage()));
-          // setState(() {
-          //   if (_partNumController.text.isNotEmpty) {
-          //     if (widget.model.partnerList
-          //             .where(
-          //                 (partner) => partner.partnerNumber == _partnerNumber)
-          //             .toList()
-          //             .length >
-          //         0) {
-          //       _validate = false;
+        alignment: Alignment.centerRight,
+        margin: EdgeInsets.only(bottom: 20, right: 20),
+        width: MediaQuery.of(context).size.width / 1.3,
+        height: 40,
+        decoration:
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(100))),
+              child: model.isLoadingCustomer
+                  ? LoadingCircular10()
+                  : Text(
+                      'Next',
+                      style: Theme.of(context)
+                          .textTheme
+                          .button
+                          .copyWith(fontSize: 16, color: Colors.white),
+                    ),
+              color: Pallete.primary,
+              onPressed: () {
+                setState(() {
+                  if (_customerNumController.text.isNotEmpty) {
+                    _validate = false;
 
-          //       // var mpoints = int.parse(widget.purchaseAmount) * 10 / 100;
-          //       // print(mpoints.toString());
+                    model
+                        .fetchAvailableCustomerByNumber(_customerNumber)
+                        .then((_) {
+                      if (model.customerList.length > 0 &&
+                          model.customerList != null) {
+                        for (var customer in model.customerList) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      SaleSummaryPage(customer, widget.showInSnackBar)));
+                        }
 
-          //       // var socialPoints = int.parse(widget.purchaseAmount) * 1 / 100;
-          //       // print(socialPoints.toString());
+                        _customerNumController.clear();
+                      } else {
+                        _validate = false;
 
-          //       Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //               builder: (BuildContext context) => ClaimSummaryPage(
-          //                   int.parse(widget.purchaseAmount),
-          //                   // mpoints,
-          //                   // socialPoints,
-          //                   _partnerNumber)));
-          //       _partNumController.clear();
-          //     } else {
-          //       _validate = false;
-
-          //       _buildAlert(context);
-          //       _partNumController.clear();
-          //     }
-          //   } else {
-          //     _validate = true;
-          //   }
-          // });
-        },
-      ),
-    );
+                        _buildAlert(context);
+                        _customerNumController.clear();
+                      }
+                    });
+                  } else {
+                    _validate = true;
+                  }
+                });
+              },
+            ),
+          ],
+        ));
   }
 
   // Alert with single button.
@@ -248,8 +243,7 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
     Alert(
       context: context,
       type: AlertType.warning,
-      title: 'invalid partner number',
-      //  Strings.invalidPartNumber
+      title: Strings.invalidCustomerNumber,
       buttons: [
         DialogButton(
           color: Pallete.primary,
@@ -264,27 +258,26 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
     ).show();
   }
 
-  Widget _buildAmountField() {
+  Widget _buildCustomerNumField() {
     return Container(
       width: MediaQuery.of(context).size.width / 1.3,
       alignment: Alignment.center,
       child: TextField(
         textAlign: TextAlign.center,
-        controller: _partNumController,
+        controller: _customerNumController,
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Pallete.primary),
             ),
-            hintText: 'partner number',
-            // Strings.enterPartNumber,
+            hintText: Strings.enterCustomerNum,
             contentPadding: EdgeInsets.symmetric(vertical: 3),
-            errorText: _validate ? "Partner Number can't be Empty." : null,
+            errorText: _validate ? Strings.errorCustomerNum : null,
             errorStyle: TextStyle(fontSize: 14, color: Colors.redAccent[200])),
         maxLines: 1,
         keyboardType: TextInputType.number,
         onChanged: (v) {
           setState(() {
-            _partnerNumber = v;
+            _customerNumber = v;
             print(v);
           });
         },
@@ -292,25 +285,11 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
     );
   }
 
-  Widget _buildBackBtn(BuildContext context) {
-    return Container(
-        alignment: Alignment.centerLeft,
-        child: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            size: 28,
-            color: Pallete.primary,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ));
-  }
-
   /// Display the preview from the camera (or a message if the preview is not available).
   Widget _cameraPreviewWidget() {
     if (controller == null || !controller.value.isInitialized) {
       return Text(
-        'nocam selected',
-        // Strings.noCamSelected,
+        Strings.noCamSelected,
         style: TextStyle(
           color: Colors.white,
           fontSize: 24.0,
@@ -327,36 +306,25 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
 
   void onCodeRead(dynamic value) {
     print(value.toString());
-    // setState(() {
-    //   if (widget.model.partnerList
-    //           .where((partner) => partner.partnerNumber == value.toString())
-    //           .toList()
-    //           .length >
-    //       0) {
-    //     _validate = false;
+    setState(() {
+      widget.model.fetchAvailableCustomer(value.toString()).then((_) {
+        if (widget.model.customerList.length > 0 &&
+            widget.model.customerList != null) {
+          for (var customer in widget.model.customerList) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        SaleSummaryPage(customer, widget.showInSnackBar)));
+          }
 
-    //     // var mpoints = int.parse(widget.purchaseAmount) * 10 / 100;
-    //     // print(mpoints.toString());
-
-    //     // var socialPoints = int.parse(widget.purchaseAmount) * 1 / 100;
-    //     // print(socialPoints.toString());
-
-    //     Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //             builder: (BuildContext context) => ClaimSummaryPage(
-    //                 int.parse(widget.purchaseAmount),
-    //                 // mpoints,
-    //                 // socialPoints,
-    //                 value.toString())));
-    //     _partNumController.clear();
-    //   } else {
-    //     _validate = false;
-
-    //     _buildAlert(context);
-    //     _partNumController.clear();
-    //   }
-    // });
+          _customerNumController.clear();
+        } else {
+          _buildAlert(context);
+          _customerNumController.clear();
+        }
+      });
+    });
     // ... do something
     // wait 5 seconds then start scanning again.
     new Future.delayed(const Duration(seconds: 5), controller.startScanning);

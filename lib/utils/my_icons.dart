@@ -26,6 +26,7 @@ class LineAwesomeIcons {
   static final IconData signOut = new IconData(0xf2fc, fontFamily: fontFamily);
   static final IconData settings = new IconData(0xf19a, fontFamily: fontFamily);
   static final IconData cart = new IconData(0xf2fa, fontFamily: fontFamily);
+  static final IconData pen = new IconData(0xf2b2, fontFamily: fontFamily);
   static final IconData addCart = new IconData(0xf16e, fontFamily: fontFamily);
 
 

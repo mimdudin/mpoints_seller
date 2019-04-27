@@ -70,6 +70,7 @@ class _SaleScanProductPageState extends State<SaleScanProductPage>
     // return ScopedModelDescendant<MainModel>(
     //   builder: (context, child, model) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -97,7 +98,6 @@ class _SaleScanProductPageState extends State<SaleScanProductPage>
           ),
         ],
       ),
-      key: _scaffoldKey,
       body: Container(
         child: ListView(
           children: <Widget>[
@@ -248,7 +248,7 @@ class _SaleScanProductPageState extends State<SaleScanProductPage>
         ),
         color: Pallete.primary,
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SaleSummaryPage()));
+          // Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => SaleSummaryPage()));
           // setState(() {
           //   if (_partNumController.text.isNotEmpty) {
           //     if (widget.model.partnerList

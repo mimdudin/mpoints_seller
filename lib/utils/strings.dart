@@ -1,6 +1,76 @@
 class Strings {
   static String labelSignin = 'Already have an account?';
   static String signIn = 'Sign In';
+  static String signUp = 'Sign Up';
+  static String email = 'Email';
+  static String hintEmail = "enter your email";
   static String forgotPass = 'Forgot Password?';
-
+  static String password = 'Password';
+  static String validEmail = 'Please enter valid email.';
+  static String validPassword = 'Invalid Password.';
+  static String minPassword = 'Password must at least 6 characters.';
+  static String dontHaveAcc = "Don't have an account? ";
+  static String enterPIN = "Enter PIN";
+  static String errorEmailPass = "Invalid your Email or Password.";
+  static String errorNotUser =
+      "Your email and password currently not registered.";
+  static String emailAlregistered =
+      "Email address is already use by another account.";
+  static String resetPassDesc =
+      "We will send reset password link to your email";
+  static String requestingPass = "Requesting password reset email";
+  static String errorRequestPass =
+      "Password reset failed, did you enter the correct address?";
+  static String invalidPIN = "Invalid PIN";
+  static String transactions = "Transactions";
+  static String employees = "Employees";
+  static String sellerRegistration = "Seller Registration";
+  static String businessDetails = "Business Details";
+  static String contactDetails = "Contact Details";
+  static String enterRegName = "enter registered name";
+  static String enterBusinessName = "enter business name";
+  static String enterBusinessNumber = "enter registration number";
+  static String enterPhone = "enter phone number";
+  static String businessNumber = "Business Registration Number";
+  static String phoneNumber = "Phone Number";
+  static String enterBusinessAddress = "enter business address";
+  static String businessAddress = "Business Address";
+  static String mailingAddress = "Mailing Address";
+  static String enterMailingAddress = "enter mailing address";
+  static String registeredName = "Registered Name*";
+  static String finish = "Finish";
+  static String businessName = "Business Name*";
+  static String errorRegisteredName = "Registered Name can't be empty.";
+  static String errorBusinessName = "Business Name can't be empty.";
+  static String errorTitle = "Title can't be empty.";
+  static String errorPin = 'PIN must at least 4 characters.';
+  static String errorFirstName = "First Name can't be empty.";
+  static String errorLastName = "Last Name can't be empty.";
+  static String errorBusinessNumber = "Registered Number can't be empty.";
+  static String errorBusinessAddress = "Business Address can't be empty.";
+  static String errorMailingAddress = "Mailing Address can't be empty.";
+  static String invalidPhoneNumber = "Invalid Phone Number";
+  static String employeeList = "Employees List:";
+  static String pinNumber = "PIN Number";
+  static String employeeDetails = "Employee Details";
+  static String basicDetails = "Basic Details";
+  static String title = "Title";
+  static String firstName = "First Name";
+  static String lastName = "Last Name";
+  static String employeeRegistration = "Employee Registration";
+  static String enterTitle = "enter title employee";
+  static String enterFirstName = "enter first name";
+  static String enterLastName = "enter last name";
+  static String enterPINnumber = "enter pin number";
+  static String newEmployee = "New Employee";
+  static String delete = "Delete";
+  static String addEligibleProduct = "Add Eligible Products";
+  static String pointsTotal = "Points Total";
+  static String selectCustomer = "Select Customer";
+  static String enterCustomerNum = "Enter Customer Number";
+  static String errorCustomerNum = "Customer Number can't be Empty.";
+  static String invalidCustomerNumber = "Invalid Customer Number";
+  static String noCamSelected = "No camera selected";
+  static String transactionList = "Transactions List";
+  static String enterEmployeePIN = "Employee PIN";
 }
