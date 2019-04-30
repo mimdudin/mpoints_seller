@@ -9,14 +9,16 @@ import '../../utils/strings.dart';
 // import '../home.dart';
 // import '../authentications/login_page.dart';
 import '../../utils/loading.dart';
+import '../../models/customer.dart';
 import '../../services/main_model.dart';
 import './sale_success_page.dart';
 
 class SaleEmployeeValidation extends StatefulWidget {
   final Function showInSnackBar;
-  final String customerName;
+  final Customer customer;
+  final int total;
 
-  SaleEmployeeValidation(this.showInSnackBar, this.customerName);
+  SaleEmployeeValidation(this.showInSnackBar, this.customer, this.total);
 
   @override
   _SaleEmployeeValidationState createState() => _SaleEmployeeValidationState();
@@ -76,7 +78,7 @@ class _SaleEmployeeValidationState extends State<SaleEmployeeValidation> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: 32),
-                    child: model.isLoadingUser
+                    child: model.isLoadingTransaction
                         ? LoadingCircular25()
                         : _buildPinForm(model),
                   )
@@ -100,7 +102,7 @@ class _SaleEmployeeValidationState extends State<SaleEmployeeValidation> {
 
   Widget _buildPINlabel() {
     return Container(
-      margin: EdgeInsets.only(top: 250),
+      margin: EdgeInsets.only(top: 268),
       alignment: Alignment.center,
       child: Text(
         Strings.enterEmployeePIN,
@@ -147,14 +149,7 @@ class _SaleEmployeeValidationState extends State<SaleEmployeeValidation> {
                 _buildAlert(context);
                 _pinEditingController.clear();
               } else {
-                model
-                    .addTransactionToStatement(
-                        model.statementList.length + 1,
-                        widget.customerName,
-                        model.transactionList
-                            .map((m) => m.mpoints)
-                            .reduce((a, b) => a + b))
-                    .then((_) {
+                updateTransaction(model).then((_) {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
@@ -205,5 +200,18 @@ class _SaleEmployeeValidationState extends State<SaleEmployeeValidation> {
           ),
           onPressed: () => Navigator.pop(context),
         ));
+  }
+
+  Future updateTransaction(MainModel model) async {
+    await Future.wait([
+      model.addStatementToTransactionList(
+        uid: model.user?.uid,
+        id: model.statementList.length + 1,
+        custName: "${widget.customer?.firstName} ${widget.customer?.lastName}",
+      ),
+      model.updateMPoints(
+          widget.customer.mpoints + widget.total, widget.customer?.id),
+      model.addClaimToStatement(widget.total.toDouble(), 0, widget.customer?.id)
+    ]);
   }
 }

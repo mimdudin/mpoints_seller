@@ -3,6 +3,7 @@ class Strings {
   static String signIn = 'Sign In';
   static String signUp = 'Sign Up';
   static String email = 'Email';
+  static String add = 'Add';
   static String hintEmail = "enter your email";
   static String forgotPass = 'Forgot Password?';
   static String password = 'Password';
@@ -73,4 +74,5 @@ class Strings {
   static String noCamSelected = "No camera selected";
   static String transactionList = "Transactions List";
   static String enterEmployeePIN = "Employee PIN";
+  static String next = "Next";
 }

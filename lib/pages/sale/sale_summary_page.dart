@@ -97,10 +97,7 @@ class _SaleSummaryPageState extends State<SaleSummaryPage> {
       print(_scanBarcode);
 
       model.fetchAvailableEligibleProduct(
-          _scanBarcode,
-          model.transactionList.length + 1,
-          "${widget.customer?.firstName} ${widget.customer?.lastName}",
-          showInSnackBar);
+          _scanBarcode, model.transactionList.length + 1, showInSnackBar);
     });
   }
 
@@ -128,7 +125,7 @@ class _SaleSummaryPageState extends State<SaleSummaryPage> {
     ));
   }
 
-  Widget _buildCardEligibleProduct(Transaction transaction) {
+  Widget _buildCardEligibleProduct(Product transaction) {
     return Container(
       child: Card(
         elevation: 2.0,
@@ -225,32 +222,42 @@ class _SaleSummaryPageState extends State<SaleSummaryPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: model.isLoadingTransaction
-                  ? LoadingCircular10()
-                  : Text(
-                      'Finish',
-                      style: Theme.of(context)
-                          .textTheme
-                          .button
-                          .copyWith(fontSize: 16, color: Colors.white),
-                    ),
+          Container(
+            width: 105,
+            child: RaisedButton.icon(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                label: model.isLoadingTransaction
+                    ? Image.asset('assets/icons/Right.png',
+                        height: 25, color: Pallete.primary)
+                    : Image.asset('assets/icons/Right.png', height: 25),
+                icon: model.isLoadingTransaction
+                    ? LoadingCircular10()
+                    : Text(
+                        Strings.next,
+                        style: Theme.of(context).textTheme.button.copyWith(
+                            fontSize: 17,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400),
+                      ),
               color: Pallete.primary,
               onPressed: () {
                 if (model.transactionList == null ||
                     model.transactionList.length == 0) {
-                  showInSnackBar('Nothing eligible product validation.');
+                  showInSnackBar('No eligible product added.');
                 } else {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => SaleEmployeeValidation(
-                              widget.showInSnackBar,
-                              "${widget.customer?.firstName} ${widget.customer?.lastName}")));
+                          builder: (BuildContext context) =>
+                              SaleEmployeeValidation(
+                                  widget.showInSnackBar,
+                                  widget.customer,
+                                  model.transactionList
+                                      .map((m) => m.mpoints)
+                                      .reduce((a, b) => a + b))));
                 }
-              }),
+              })),
         ],
       ),
     );
@@ -261,24 +268,31 @@ class _SaleSummaryPageState extends State<SaleSummaryPage> {
       margin: EdgeInsets.only(bottom: 20),
       height: 40,
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: model.isLoadingTransaction
-                  ? LoadingCircular10()
-                  : Text(
-                      'Scan',
-                      style: Theme.of(context)
-                          .textTheme
-                          .button
-                          .copyWith(fontSize: 16, color: Colors.white),
-                    ),
-              color: Pallete.primary,
-              onPressed: () => initPlatformState(model)),
+          Container(
+            width: 105,
+            child: RaisedButton.icon(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                label: model.isLoadingTransaction
+                    ? Image.asset('assets/icons/QR.png',
+                        height: 25, color: Pallete.primary)
+                    : Image.asset('assets/icons/QR.png', height: 25),
+                icon: model.isLoadingTransaction
+                    ? LoadingCircular10()
+                    : Text(
+                        Strings.add,
+                        style: Theme.of(context).textTheme.button.copyWith(
+                            fontSize: 17,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400),
+                      ),
+                color: Pallete.primary,
+                onPressed: () => initPlatformState(model)),
+          )
         ],
       ),
     );
@@ -290,7 +304,8 @@ class _SaleSummaryPageState extends State<SaleSummaryPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Mp. ${model.transactionList.map((m) => m.mpoints).reduce((a, b) => a + b)}",
+            "Mp. ${model.transactionList.map((m) => m.mpoints).reduce((a, b) => a + b)}" ??
+                "Mp. 12345",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.title.copyWith(
                 fontSize: 18,

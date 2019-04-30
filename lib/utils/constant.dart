@@ -5,4 +5,6 @@ class Constant {
   static String partnersParam = '/partners';
   static String employeeParam = '/employees';
   static String statementParam = '/statements';
+  static String userParam = '/users';
+
 }

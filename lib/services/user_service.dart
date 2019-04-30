@@ -22,8 +22,8 @@ mixin UserService on Model {
   List<Employee> _employeeList = [];
   List<Employee> get employeeList => _employeeList;
 
-  List<Transaction> _statementList = [];
-  List<Transaction> get statementList => _statementList;
+  List<Transaction> statementLists = [];
+  List<Transaction> get statementList => statementLists;
 
   // List<Statement> get statementList {
   //   if (_status == 'Claim') {
@@ -89,7 +89,7 @@ mixin UserService on Model {
             pin: result['PIN'],
             email: result['email'],
             employeeList: _employeeList,
-            statementList: _statementList);
+            statementList: statementLists);
       }
       //  User.fromJson(result);
 
@@ -143,138 +143,6 @@ mixin UserService on Model {
     notifyListeners();
   }
 
-  // Future<void> updateMPoints(double mpoints) async {
-  //   _isLoadingUser = true;
-  //   notifyListeners();
-
-  //   final response = await http.put(
-  //       Constant.baseUrl +
-  //           Constant.userParam +
-  //           '/${_user.uid}/mpoints' +
-  //           Constant.jsonExt,
-  //       body: json.encode(mpoints));
-  //   print(json.decode(response.body));
-
-  //   final User updateUser = User(
-  //       uid: _user?.uid,
-  //       firstName: _user?.firstName,
-  //       lastName: _user?.lastName,
-  //       email: _user?.email,
-  //       phoneNumber: _user?.phoneNumber,
-  //       photo: _user?.photo,
-  //       referredBy: _user?.referredBy,
-  //       myReferral: _user?.myReferral,
-  //       mpoints: mpoints,
-  //       mpointsUsed: _user?.mpointsUsed,
-  //       mpointsReceived: _user?.mpointsReceived,
-  //       socialPoints: _user?.socialPoints,
-  //       statementList: _statementList);
-
-  //   _user = updateUser;
-
-  //   _isLoadingUser = false;
-  //   notifyListeners();
-  // }
-
-  // Future<void> updateMPointsUsed(int rewardCost) async {
-  //   _isLoadingUser = true;
-  //   notifyListeners();
-
-  //   final response = await http.put(
-  //       Constant.baseUrl +
-  //           Constant.userParam +
-  //           '/${_user.uid}/mpointsUsed' +
-  //           Constant.jsonExt,
-  //       body: json.encode(user.mpointsUsed + rewardCost));
-  //   print(json.decode(response.body));
-
-  //   final User updateUser = User(
-  //       uid: _user?.uid,
-  //       firstName: _user?.firstName,
-  //       lastName: _user?.lastName,
-  //       email: _user?.email,
-  //       phoneNumber: _user?.phoneNumber,
-  //       photo: _user?.photo,
-  //       referredBy: _user?.referredBy,
-  //       myReferral: _user?.myReferral,
-  //       mpoints: _user?.mpoints,
-  //       mpointsUsed: _user.mpointsUsed + rewardCost,
-  //       mpointsReceived: _user?.mpointsReceived,
-  //       socialPoints: _user?.socialPoints,
-  //       statementList: _statementList);
-
-  //   _user = updateUser;
-
-  //   _isLoadingUser = false;
-  //   notifyListeners();
-  // }
-
-  // Future<void> updateMPointsReceived(double claim) async {
-  //   _isLoadingUser = true;
-  //   notifyListeners();
-
-  //   final response = await http.put(
-  //       Constant.baseUrl +
-  //           Constant.userParam +
-  //           '/${_user.uid}/mpointsReceived' +
-  //           Constant.jsonExt,
-  //       body: json.encode(user.mpointsReceived + claim));
-  //   print(json.decode(response.body));
-
-  //   final User updateUser = User(
-  //       uid: _user?.uid,
-  //       firstName: _user?.firstName,
-  //       lastName: _user?.lastName,
-  //       email: _user?.email,
-  //       phoneNumber: _user?.phoneNumber,
-  //       photo: _user?.photo,
-  //       referredBy: _user?.referredBy,
-  //       myReferral: _user?.myReferral,
-  //       mpoints: _user?.mpoints,
-  //       mpointsUsed: _user?.mpointsUsed,
-  //       mpointsReceived: _user.mpointsReceived + claim,
-  //       socialPoints: _user?.socialPoints,
-  //       statementList: _statementList);
-
-  //   _user = updateUser;
-
-  //   _isLoadingUser = false;
-  //   notifyListeners();
-  // }
-
-  // Future<void> updateSocialPoints(double socialPoints) async {
-  //   _isLoadingUser = true;
-  //   notifyListeners();
-
-  //   final response = await http.put(
-  //       Constant.baseUrl +
-  //           Constant.userParam +
-  //           '/${_user.uid}/social_points' +
-  //           Constant.jsonExt,
-  //       body: json.encode(user.socialPoints + socialPoints));
-  //   print(json.decode(response.body));
-
-  //   final User updateUser = User(
-  //       uid: _user?.uid,
-  //       firstName: _user?.firstName,
-  //       lastName: _user?.lastName,
-  //       email: _user?.email,
-  //       phoneNumber: _user?.phoneNumber,
-  //       photo: _user?.photo,
-  //       referredBy: _user?.referredBy,
-  //       myReferral: _user?.myReferral,
-  //       mpoints: _user?.mpoints,
-  //       mpointsUsed: _user?.mpointsUsed,
-  //       mpointsReceived: _user?.mpointsReceived,
-  //       socialPoints: _user.socialPoints + socialPoints,
-  //       statementList: _statementList);
-
-  //   _user = updateUser;
-
-  //   _isLoadingUser = false;
-  //   notifyListeners();
-  // }
-
   Future addEmployee(String pin, String firstName, String lastName,
       String title, int uniqueId) async {
     // final timestamp = DateTime.now().toUtc().millisecondsSinceEpoch;
@@ -322,95 +190,6 @@ mixin UserService on Model {
     }
   }
 
-  Future addTransactionToStatement(
-      int id, String customerName, int total) async {
-    _isLoadingUser = true;
-    notifyListeners();
-
-    final Map<String, dynamic> statementData = {
-      'id': id,
-      'customerName': customerName,
-      'mpoints': total,
-      'productName': ''
-    };
-
-    try {
-      final http.Response response = await http.post(
-          Constant.baseUrl +
-              Constant.partnersParam +
-              '/${_user.uid}' +
-              Constant.statementParam +
-              Constant.jsonExt,
-          body: json.encode(statementData));
-
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      print(responseData);
-
-      final Transaction newTransaction = Transaction(
-          transactionId: responseData['name'],
-          id: id,
-          mpoints: total,
-          customerName: customerName,
-          productName: '');
-
-      _statementList.add(newTransaction);
-
-      _isLoadingUser = false;
-      notifyListeners();
-    } catch (error) {
-      _isLoadingUser = false;
-      notifyListeners();
-      throw Exception('failed to load data');
-    }
-  }
-
-  // Future addClaimToStatement(
-  //     double claim, String partnerName, int purchaseAmount) async {
-  //   final timestamp = DateTime.now().toUtc().millisecondsSinceEpoch;
-  //   print(timestamp.toString());
-
-  //   _isLoadingUser = true;
-  //   notifyListeners();
-
-  //   final Map<String, dynamic> statementData = {
-  //     'claim': claim,
-  //     'contra': "Unknown",
-  //     'timestamp': timestamp,
-  //     'partner_name': partnerName,
-  //     'purchase_amount': purchaseAmount
-  //   };
-
-  //   try {
-  //     final http.Response response = await http.post(
-  //         Constant.baseUrl +
-  //             Constant.userParam +
-  //             '/${_user.uid}' +
-  //             Constant.statementParam +
-  //             Constant.jsonExt,
-  //         body: json.encode(statementData));
-
-  //     final Map<String, dynamic> responseData = json.decode(response.body);
-  //     print(responseData);
-
-  //     final Statement newStatement = Statement(
-  //         id: responseData['name'],
-  //         claim: claim,
-  //         contra: "Unknown",
-  //         timestamp: timestamp,
-  //         partnerName: partnerName,
-  //         purchaseAmount: purchaseAmount);
-
-  //     _statementList.add(newStatement);
-
-  //     _isLoadingUser = false;
-  //     notifyListeners();
-  //   } catch (error) {
-  //     _isLoadingUser = false;
-  //     notifyListeners();
-  //     throw Exception('failed to load data');
-  //   }
-  // }
-
   // Future addClaimToPartner(
   //     double claim, int purchaseAmount, String user, String partnerId) async {
   //   final timestamp = DateTime.now().toUtc().millisecondsSinceEpoch;
@@ -430,52 +209,6 @@ mixin UserService on Model {
   //   try {
   //     final http.Response response = await http.post(
   //         Constant.baseUrl + '/partners/$partnerId/claims' + Constant.jsonExt,
-  //         body: json.encode(statementData));
-
-  //     final Map<String, dynamic> responseData = json.decode(response.body);
-  //     print(responseData);
-
-  //     // final Statement newStatement = Statement(
-  //     //     id: responseData['name'],
-  //     //     claim: claim,
-  //     //     contra: "Unknown",
-  //     //     timestamp: timestamp,
-  //     //     partnerName: partnerName,
-  //     //     purchaseAmount: purchaseAmount);
-
-  //     // _statementList.add(newStatement);
-
-  //     _isLoadingUser = false;
-  //     notifyListeners();
-  //   } catch (error) {
-  //     _isLoadingUser = false;
-  //     notifyListeners();
-  //     throw Exception('failed to load data');
-  //   }
-  // }
-
-  // Future addRedeemToPartner(String banner, String partnerName, int rewardCost,
-  //     String rewardName, String partnerId, String user) async {
-  //   final timestamp = DateTime.now().toUtc().millisecondsSinceEpoch;
-  //   print(timestamp.toString());
-
-  //   _isLoadingUser = true;
-  //   notifyListeners();
-
-  //   final Map<String, dynamic> statementData = {
-  //     'banner': banner,
-  //     'contra': "Unknown",
-  //     'timestamp': timestamp,
-  //     'reward_cost': rewardCost,
-  //     'reward_name': rewardName,
-  //     'user': user,
-  //   };
-
-  //   try {
-  //     final http.Response response = await http.post(
-  //         Constant.baseUrl +
-  //             '/partners/$partnerId/redeem_request' +
-  //             Constant.jsonExt,
   //         body: json.encode(statementData));
 
   //     final Map<String, dynamic> responseData = json.decode(response.body);
@@ -561,14 +294,52 @@ mixin UserService on Model {
         });
       }
 
-      _statementList = _fetchedStatement;
+      statementLists = _fetchedStatement;
       notifyListeners();
 
-      print(_statementList.length.toString());
+      print(statementLists.length.toString());
 
       // _isLoadingClaim = false;
     });
-    return _statementList;
+    return statementLists;
+  }
+
+  Future addClaimToStatement(
+      double claim, int purchaseAmount, String userId) async {
+    final timestamp = DateTime.now().toUtc().millisecondsSinceEpoch;
+    print(timestamp.toString());
+
+    _isLoadingUser = true;
+    notifyListeners();
+
+    final Map<String, dynamic> statementData = {
+      'claim': claim,
+      'contra': "Unknown",
+      'timestamp': timestamp,
+      'partner_name': _user?.name,
+      'purchase_amount': purchaseAmount
+    };
+
+    try {
+      final http.Response response = await http.post(
+          Constant.baseUrl +
+              Constant.userParam +
+              '/$userId' +
+              Constant.statementParam +
+              Constant.jsonExt,
+          body: json.encode(statementData));
+
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      print(responseData);
+      print(claim);
+
+      _isLoadingUser = false;
+      notifyListeners();
+    } catch (error) {
+      _isLoadingUser = false;
+      notifyListeners();
+      throw Exception('failed to load data');
+    }
   }
 
   Future deleteEmployee() async {
@@ -601,17 +372,18 @@ mixin UserService on Model {
     }
   }
 
-  // void clearUserList() {
-  //   _user = null;
-  //   notifyListeners();
-  // }
+  void clearUser() {
+    _user = null;
+    notifyListeners();
+  }
 
-  // void clearStatementList() {
-  //   _statementList.clear();
-  //   notifyListeners();
-  // }
+  void clearEmployeeList() {
+    _employeeList.clear();
+    notifyListeners();
+  }
 
-  // String format(double n) {
-  //   return n?.toStringAsFixed(n?.truncateToDouble() == n ? 0 : 2);
-  // }
+  void clearStatementList() {
+    statementLists.clear();
+    notifyListeners();
+  }
 }

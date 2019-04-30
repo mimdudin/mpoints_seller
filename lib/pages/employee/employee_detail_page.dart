@@ -235,32 +235,38 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage> {
         width: MediaQuery.of(context).size.width / 1.3,
         height: 40,
         decoration:
-            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: model.isLoadingUser
-                  ? LoadingCircular10()
-                  : Text(
-                      Strings.delete,
-                      style: Theme.of(context)
-                          .textTheme
-                          .button
-                          .copyWith(fontSize: 16, color: Colors.white),
-                    ),
-              color: Pallete.primary,
-              onPressed: () {
-                model.selectedEmployee(widget.i);
-                model.deleteEmployee().then((_) {
-                  Navigator.of(context).pop();
-                  widget.showInSnackbar(
-                      '${widget.employee.firstName} ${widget.employee.firstName} removed in Employees.');
-                });
-              },
-            ),
+            Container(
+                width: 115,
+                child: RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  label: model.isLoadingUser
+                      ? Image.asset('assets/icons/Delete.png',
+                          height: 25, color: Pallete.primary)
+                      : Image.asset('assets/icons/Delete.png', height: 25),
+                  icon: model.isLoadingUser
+                      ? LoadingCircular10()
+                      : Text(
+                          Strings.delete,
+                          style: Theme.of(context).textTheme.button.copyWith(
+                              fontSize: 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400),
+                        ),
+                  color: Pallete.primary,
+                  onPressed: () {
+                    model.selectedEmployee(widget.i);
+                    model.deleteEmployee().then((_) {
+                      Navigator.of(context).pop();
+                      widget.showInSnackbar(
+                          '${widget.employee.firstName} ${widget.employee.firstName} removed in Employees.');
+                    });
+                  },
+                )),
           ],
         ));
   }

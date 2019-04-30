@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                   _buildSignInBtn(),
                   SizedBox(height: 25),
                   _buildForgotPass(),
-                  SizedBox(height: 15),
+                  SizedBox(height: 60),
                   _buildDontHaveAcc(),
                   // SizedBox(height: 20),
                 ],
@@ -134,7 +134,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildSignInLabel() {
     return Container(
-      margin: EdgeInsets.only(top: 250),
+      margin: EdgeInsets.only(top: 260),
       alignment: Alignment.center,
       child: Text(
         Strings.signIn,
@@ -156,58 +156,69 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildDontHaveAcc() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          child: Text(Strings.dontHaveAcc,
-              style:
-                  Theme.of(context).textTheme.caption.copyWith(fontSize: 13)),
-        ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        SignupPage(auth: widget.auth)));
-          },
-          child: Container(
-            child: Text(Strings.signUp,
-                style: TextStyle(
-                    fontSize: 15.0,
-                    color: Pallete.primary,
-                    fontWeight: FontWeight.w500)),
-          ),
-        )
-      ],
-    );
+    return Container(
+        margin: EdgeInsets.only(right: 40),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Container(
+              child: Text(Strings.dontHaveAcc,
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption
+                      .copyWith(fontSize: 13)),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            SignupPage(auth: widget.auth)));
+              },
+              child: Container(
+                child: Text(Strings.signUp,
+                    style: TextStyle(
+                        fontSize: 15.0,
+                        color: Pallete.primary,
+                        fontWeight: FontWeight.w500)),
+              ),
+            )
+          ],
+        ));
   }
 
   Widget _buildSignInBtn() {
     return Container(
-        padding: EdgeInsets.symmetric(horizontal: 40),
+        margin: EdgeInsets.symmetric(horizontal: 40),
         height: 40,
         decoration:
-            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            RaisedButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(100))),
-                child: _isLoading
-                    ? LoadingCircular10()
-                    : Text(
-                        Strings.signIn,
-                        style: Theme.of(context)
-                            .textTheme
-                            .button
-                            .copyWith(fontSize: 16, color: Colors.white),
-                      ),
-                color: Pallete.primary,
-                onPressed: _validateAndSubmit //_validateAndSubmit,
-                ),
+            Container(
+              width: 125,
+              child: RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  label: _isLoading
+                      ? Image.asset('assets/icons/Right.png',
+                          height: 25, color: Pallete.primary)
+                      : Image.asset('assets/icons/Right.png', height: 25),
+                  icon: _isLoading
+                      ? LoadingCircular10()
+                      : Text(
+                          Strings.signIn,
+                          style: Theme.of(context).textTheme.button.copyWith(
+                              fontSize: 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400),
+                        ),
+                  color: Pallete.primary,
+                  onPressed: _validateAndSubmit //_validateAndSubmit,
+                  ),
+            ),
           ],
         ));
   }

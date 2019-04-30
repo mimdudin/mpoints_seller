@@ -76,26 +76,35 @@ class _HomeState extends State<Home> {
     return Stack(
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: 20),
+          margin: EdgeInsets.only(top: 40),
           alignment: Alignment.center,
           child: Text(
             "Welcome ${model.user?.name}",
             style: Theme.of(context)
                 .textTheme
                 .subhead
-                .copyWith(fontSize: 24, color: Colors.white),
+                .copyWith(fontSize: 22, color: Colors.white),
           ),
         ),
         Positioned(
           right: 5.0,
-          top: 8,
+          top: 3,
           child: IconButton(
               icon: Icon(
                 LineAwesomeIcons.signOut,
                 color: Colors.white,
                 size: 28,
               ),
-              onPressed: () => showInSnackBar('This is logout.')),
+              onPressed: () {
+                _signOut().then((_) {
+                  setState(() {
+                    model.clearEmployeeList();
+                    model.clearStatementList();
+                    model.clearTransactionList();
+                    model.clearUser();
+                  });
+                });
+              }),
         )
       ],
     );
@@ -181,6 +190,7 @@ class _HomeState extends State<Home> {
     try {
       await widget.auth.signOut();
       widget.onSignedOut();
+      Navigator.pushReplacementNamed(context, '/main');
     } catch (e) {
       print("Error: $e");
     }

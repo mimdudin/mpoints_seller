@@ -112,7 +112,7 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
 
   Widget _buildPINlabel() {
     return Container(
-      margin: EdgeInsets.only(top: 250),
+      margin: EdgeInsets.only(top: 260),
       alignment: Alignment.center,
       child: Text(
         Strings.enterPIN,

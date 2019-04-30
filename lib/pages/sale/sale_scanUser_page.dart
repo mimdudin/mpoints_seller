@@ -105,7 +105,7 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
           actions: <Widget>[
             Container(
               margin: EdgeInsets.only(right: 10),
-              child: Icon(LineAwesomeIcons.userAdd, color: Colors.grey),
+              child: Image.asset('assets/icons/Customer.png', width: 35,),
             ),
           ],
         ),
@@ -185,55 +185,62 @@ class _SaleScanUserPageState extends State<SaleScanUserPage>
         width: MediaQuery.of(context).size.width / 1.3,
         height: 40,
         decoration:
-            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: model.isLoadingCustomer
-                  ? LoadingCircular10()
-                  : Text(
-                      'Next',
-                      style: Theme.of(context)
-                          .textTheme
-                          .button
-                          .copyWith(fontSize: 16, color: Colors.white),
-                    ),
-              color: Pallete.primary,
-              onPressed: () {
-                setState(() {
-                  if (_customerNumController.text.isNotEmpty) {
-                    _validate = false;
-
-                    model
-                        .fetchAvailableCustomerByNumber(_customerNumber)
-                        .then((_) {
-                      if (model.customerList.length > 0 &&
-                          model.customerList != null) {
-                        for (var customer in model.customerList) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                      SaleSummaryPage(customer, widget.showInSnackBar)));
-                        }
-
-                        _customerNumController.clear();
-                      } else {
+            Container(
+                width: 105,
+                child: RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  label: model.isLoadingCustomer
+                      ? Image.asset('assets/icons/Right.png',
+                          height: 25, color: Pallete.primary)
+                      : Image.asset('assets/icons/Right.png', height: 25),
+                  icon: model.isLoadingCustomer
+                      ? LoadingCircular10()
+                      : Text(
+                          Strings.next,
+                          style: Theme.of(context).textTheme.button.copyWith(
+                              fontSize: 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400),
+                        ),
+                  color: Pallete.primary,
+                  onPressed: () {
+                    setState(() {
+                      if (_customerNumController.text.isNotEmpty) {
                         _validate = false;
 
-                        _buildAlert(context);
-                        _customerNumController.clear();
+                        model
+                            .fetchAvailableCustomerByNumber(_customerNumber)
+                            .then((_) {
+                          if (model.customerList.length > 0 &&
+                              model.customerList != null) {
+                            for (var customer in model.customerList) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          SaleSummaryPage(customer,
+                                              widget.showInSnackBar)));
+                            }
+
+                            _customerNumController.clear();
+                          } else {
+                            _validate = false;
+
+                            _buildAlert(context);
+                            _customerNumController.clear();
+                          }
+                        });
+                      } else {
+                        _validate = true;
                       }
                     });
-                  } else {
-                    _validate = true;
-                  }
-                });
-              },
-            ),
+                  },
+                )),
           ],
         ));
   }

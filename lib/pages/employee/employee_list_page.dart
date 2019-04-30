@@ -17,7 +17,7 @@ class EmployeeListPage extends StatefulWidget {
 
 class _EmployeeListPageState extends State<EmployeeListPage> {
   var _scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<MainModel>(
@@ -55,10 +55,15 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
             ),
           ),
           floatingActionButton: FloatingActionButton.extended(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8))),
             elevation: 4.0,
-            icon: Icon(LineAwesomeIcons.userAdd),
+            icon: Container(),
             backgroundColor: Pallete.primary,
-            label: Text(Strings.newEmployee),
+            label: Container(
+                alignment: Alignment.center,
+                width: MediaQuery.of(context).size.width / 1.3,
+                child: Text('New Employee')),
             onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -74,7 +79,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
 
   Widget _buildEmployeeListView(MainModel model) {
     if (model.employeeList != null) {
-      model.employeeList.sort((b, a) => a.uniqueId.compareTo(b.uniqueId));
+      model.employeeList.sort((b, a) => a.id.compareTo(b.id));
     }
 
     return Expanded(
@@ -125,17 +130,25 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Text(Strings.pinNumber,
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption
-                            .copyWith(fontSize: 15)),
+                    Container(
+                        width: 100,
+                        child: Text(
+                          Strings.pinNumber,
+                          style: Theme.of(context)
+                              .textTheme
+                              .caption
+                              .copyWith(fontSize: 15),
+                        )),
                     SizedBox(width: 20),
-                    Text(employee?.pin,
-                        style: Theme.of(context)
-                            .textTheme
-                            .title
-                            .copyWith(fontSize: 16, color: Pallete.primary)),
+                    Container(
+                      width: 60,
+                      child: Text(employee?.pin,
+                          overflow: TextOverflow.clip,
+                          style: Theme.of(context)
+                              .textTheme
+                              .title
+                              .copyWith(fontSize: 16, color: Pallete.primary)),
+                    ),
                   ],
                 )
               ],

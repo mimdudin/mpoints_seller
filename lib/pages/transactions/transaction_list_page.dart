@@ -53,10 +53,19 @@ class _TransactionListPageState extends State<TransactionListPage> {
             ),
           ),
           floatingActionButton: FloatingActionButton.extended(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
             elevation: 4.0,
-            icon: const Icon(Icons.add),
+            icon: Container(
+              width: MediaQuery.of(context).size.width / 1.3,
+              child:  Row(
+              children: <Widget>[
+                Image.asset('assets/icons/plus.png', height: 24,),
+                SizedBox(width: 20),
+                Text('New Sale')
+              ],
+            ),),
             backgroundColor: Pallete.primary,
-            label: const Text('New Sale'),
+            label: Container(),
             onPressed: () {
               Navigator.push(
                   context,

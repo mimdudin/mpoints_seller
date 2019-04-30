@@ -35,7 +35,8 @@ mixin CustomerService on Model {
               id: key,
               firstName: data['firstName'],
               lastName: data['lastName'],
-              customerNumber: data['customerNumber']);
+              customerNumber: data['customerNumber'],
+              mpoints: data['mpoints']);
           _fetchedCustomer.add(_customer);
         });
       }
@@ -75,7 +76,8 @@ mixin CustomerService on Model {
               id: key,
               firstName: data['firstName'],
               lastName: data['lastName'],
-              customerNumber: data['customerNumber']);
+              customerNumber: data['customerNumber'],
+              mpoints: data['mpoints']);
           _fetchedCustomer.add(_employee);
         });
       }
@@ -90,8 +92,8 @@ mixin CustomerService on Model {
     return _customerList;
   }
 
-  // void clearEmployeeList() {
-  //   _employeeList.clear();
-  //   notifyListeners();
-  // }
+  void clearEmployeeList() {
+    _customerList.clear();
+    notifyListeners();
+  }
 }
