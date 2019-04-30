@@ -19,8 +19,7 @@ class TransactionItemCard extends StatelessWidget {
               Container(
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
-                    children: transaction.productList != null ||
-                            transaction.productList.length > 0
+                    children: transaction.productList != null
                         ? transaction.productList
                             .map((t) => Container(
                                 padding: EdgeInsets.only(bottom: 10),
@@ -80,8 +79,7 @@ class TransactionItemCard extends StatelessWidget {
                 Container(
                     width: 100,
                     child: Text(
-                      transaction.productList != null ||
-                              transaction.productList.length > 0
+                      transaction.productList != null
                           ? "Mp. ${transaction.productList.map((m) => m.mpoints).reduce((a, b) => a + b)}"
                           : 'Mp. 0' ?? "Mp. 12345",
                       textAlign: TextAlign.left,
@@ -99,8 +97,7 @@ class TransactionItemCard extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                       border: Border.all(color: Pallete.primary, width: 1.5)),
-                  child: Text(transaction.productList != null ||
-                          transaction.productList.length > 0
+                  child: Text(transaction.productList != null
                       ? "${transaction.productList.length}"
                       : "0"),
                 ),
