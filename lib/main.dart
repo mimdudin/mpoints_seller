@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return ScopedModel(
       model: model,
       child: MaterialApp(
-        title: 'MPoints Seller',
+        title: 'MoPoints Seller',
         theme: ThemeData(
             primaryColor: Pallete.primary, cursorColor: Pallete.primary),
         home: SplashScreen(),
