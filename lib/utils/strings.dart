@@ -13,6 +13,7 @@ class Strings {
   static String dontHaveAcc = "Don't have an account? ";
   static String enterPIN = "Enter PIN";
   static String errorEmailPass = "Invalid your Email or Password.";
+  static String dontHaveAuthorize = "You don't have Authorize this access.";
   static String errorNotUser =
       "Your email and password currently not registered.";
   static String emailAlregistered =

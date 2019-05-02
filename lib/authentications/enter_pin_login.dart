@@ -151,25 +151,54 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
             if (pin.isEmpty) {
               _buildAlert(context);
               _pinEditingController.clear();
+            } else if (pin.isNotEmpty && model.user.pin == pin) {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => Home(
+                            auth: widget.auth,
+                            model: widget.model,
+                            onSignedOut: widget.onSignedOut,
+                            userType: 'Admin',
+                          )));
+              _pinEditingController.clear();
+
+              // if (model.employeeList
+              //             .where((emp) => emp.pin == pin)
+              //             .toList()
+              //             .length <
+              //         1) {
+              //   _buildAlert(context);
+              //   _pinEditingController.clear();
+              // } else {
+              //   Navigator.pushReplacement(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (BuildContext context) => Home(
+              //                 auth: widget.auth,
+              //                 model: widget.model,
+              //                 onSignedOut: widget.onSignedOut,
+              //               )));
+              //   _pinEditingController.clear();
+              // }
+            } else if (model.employeeList
+                    .where((emp) => emp.pin == pin)
+                    .toList()
+                    .length >
+                0) {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => Home(
+                            auth: widget.auth,
+                            model: widget.model,
+                            onSignedOut: widget.onSignedOut,
+                            userType: 'Employee',
+                          )));
+              _pinEditingController.clear();
             } else {
-              if (model.employeeList
-                          .where((emp) => emp.pin == pin)
-                          .toList()
-                          .length <
-                      1) {
-                _buildAlert(context);
-                _pinEditingController.clear();
-              } else {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Home(
-                              auth: widget.auth,
-                              model: widget.model,
-                              onSignedOut: widget.onSignedOut,
-                            )));
-                _pinEditingController.clear();
-              }
+              _buildAlert(context);
+              _pinEditingController.clear();
             }
           });
           debugPrint('submit pin:$pin');
@@ -184,7 +213,6 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
       context: context,
       type: AlertType.error,
       title: Strings.invalidPIN,
-      // desc: Strings.notEnoughMPDesc,
       buttons: [
         DialogButton(
           color: Pallete.primary,

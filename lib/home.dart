@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import './utils/pallete.dart';
 import './utils/my_icons.dart';
@@ -14,8 +15,9 @@ class Home extends StatefulWidget {
   final VoidCallback onSignedOut;
   final MainModel model;
   final Auth auth;
+  final String userType;
 
-  Home({this.auth, this.onSignedOut, this.model});
+  Home({this.auth, this.onSignedOut, this.model, this.userType});
 
   @override
   _HomeState createState() => _HomeState();
@@ -23,6 +25,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    print(widget.userType);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,10 +189,14 @@ class _HomeState extends State<Home> {
   }
 
   void _goToEmployeesPage() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (BuildContext context) => EmployeeListPage()));
+    if (widget.userType == 'Employee') {
+      _buildAlert(context);
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => EmployeeListPage()));
+    }
   }
 
   Future<void> _signOut() async {
@@ -201,5 +214,25 @@ class _HomeState extends State<Home> {
       _scaffoldKey.currentState
           .showSnackBar(new SnackBar(content: new Text(message)));
     }
+  }
+
+  // Alert with single button.
+  _buildAlert(context) {
+    Alert(
+      context: context,
+      type: AlertType.error,
+      title: Strings.dontHaveAuthorize,
+      buttons: [
+        DialogButton(
+          color: Pallete.primary,
+          child: Text(
+            "OKAY",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        )
+      ],
+    ).show();
   }
 }
