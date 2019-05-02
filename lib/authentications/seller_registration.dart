@@ -262,7 +262,7 @@ class _SellerRegistrationState extends State<SellerRegistration> {
                   fontWeight: FontWeight.w500),
             ),
             focusNode: _businessNumberFocusNode,
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.text,
             maxLines: 1,
             validator: (value) {
               if (value.isEmpty) {
@@ -395,25 +395,31 @@ class _SellerRegistrationState extends State<SellerRegistration> {
         width: MediaQuery.of(context).size.width / 1.3,
         height: 40,
         decoration:
-            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+            BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: _isLoading
-                  ? LoadingCircular10()
-                  : Text(
-                      Strings.finish,
-                      style: Theme.of(context)
-                          .textTheme
-                          .button
-                          .copyWith(fontSize: 16, color: Colors.white),
-                    ),
-              color: Pallete.primary,
-              onPressed: () => _validateAndSubmit(model),
-            ),
+            Container(
+                width: 115,
+                child: RaisedButton.icon(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  label: _isLoading
+                      ? Image.asset('assets/icons/Right.png',
+                          height: 25, color: Pallete.primary)
+                      : Image.asset('assets/icons/Right.png', height: 25),
+                  icon: _isLoading
+                      ? LoadingCircular10()
+                      : Text(
+                          Strings.finish,
+                          style: Theme.of(context).textTheme.button.copyWith(
+                              fontSize: 17,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w400),
+                        ),
+                  color: Pallete.primary,
+                  onPressed: () => _validateAndSubmit(model),
+                )),
           ],
         ));
   }

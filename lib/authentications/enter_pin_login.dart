@@ -55,7 +55,8 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
       widget.model.fetchUserById(currentUser.uid).then((user) {
         if (user.pin == '' && user.name != '')
           _goToLoginPage();
-        else if (user.name == '' && user.pin == '') _goToSellerRegistrationPage();
+        else if (user.name == '' && user.pin == '')
+          _goToSellerRegistrationPage();
       });
       print(currentUser);
     });
@@ -151,7 +152,11 @@ class _EnterPinLoginState extends State<EnterPinLogin> {
               _buildAlert(context);
               _pinEditingController.clear();
             } else {
-              if (pin != model.user.pin) {
+              if (model.employeeList
+                          .where((emp) => emp.pin == pin)
+                          .toList()
+                          .length <
+                      1) {
                 _buildAlert(context);
                 _pinEditingController.clear();
               } else {
