@@ -218,7 +218,7 @@ class _SaleSummaryPageState extends State<SaleSummaryPage> {
       margin: EdgeInsets.only(bottom: 20),
       height: 40,
       decoration:
-          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(100))),
+          BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[

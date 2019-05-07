@@ -211,6 +211,8 @@ class _SaleEmployeeValidationState extends State<SaleEmployeeValidation> {
       ),
       model.updateMPoints(
           widget.customer.mpoints + widget.total, widget.customer?.id),
+      model.updateMPointsReceived(
+          widget.customer.mpointsReceived + widget.total, widget.customer?.id),
       model.addClaimToStatement(widget.total.toDouble(), 0, widget.customer?.id)
     ]);
   }

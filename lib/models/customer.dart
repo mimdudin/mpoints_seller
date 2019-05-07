@@ -1,7 +1,7 @@
 class Customer {
   String id, firstName, lastName, customerNumber;
-  double mpoints;
+  double mpoints, mpointsReceived;
 
-  Customer({this.id, this.firstName, this.lastName, this.customerNumber, this.mpoints});
+  Customer({this.id, this.firstName, this.lastName, this.customerNumber, this.mpoints, this.mpointsReceived});
 
 }

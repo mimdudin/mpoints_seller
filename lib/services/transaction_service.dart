@@ -119,6 +119,22 @@ mixin TransactionService on Model, UserService {
     notifyListeners();
   }
 
+  Future<void> updateMPointsReceived(double mpointsReceived, String uid) async {
+    _isLoadingTransaction = true;
+    notifyListeners();
+
+    final response = await http.put(
+        Constant.baseUrl +
+            Constant.userParam +
+            '/$uid/mpointsReceived' +
+            Constant.jsonExt,
+        body: json.encode(mpointsReceived));
+    print(json.decode(response.body));
+
+    _isLoadingTransaction = false;
+    notifyListeners();
+  }
+
   void clearTransactionList() {
     _transactionList.clear();
     notifyListeners();
