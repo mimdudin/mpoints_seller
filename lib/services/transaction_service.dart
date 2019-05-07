@@ -48,7 +48,7 @@ mixin TransactionService on Model, UserService {
           // _fetchedTransaction.add(_transaction);
           addProductToTransations(_transaction);
 
-          showInSnackBar('${data['item_name']} Added to Eligible Products.');
+          // showInSnackBar('${data['item_name']} Added to Eligible Products.');
         });
       } else {
         showInSnackBar('Eligible product not found.');
