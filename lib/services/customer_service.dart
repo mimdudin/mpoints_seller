@@ -36,7 +36,8 @@ mixin CustomerService on Model {
               firstName: data['firstName'],
               lastName: data['lastName'],
               customerNumber: data['customerNumber'],
-              mpoints: data['mpoints']);
+              mpoints: data['mpoints'],
+              mpointsReceived: data['mpointsReceived']);
           _fetchedCustomer.add(_customer);
         });
       }
